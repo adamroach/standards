@@ -1,0 +1,158 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN"><HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+<META NAME="GENERATOR" CONTENT="Adobe FrameMaker 5.5/HTML Export Filter">
+<LINK REL="STYLESHEET" HREF="draft-roach-sip-isup-parameters-00.css" CHARSET="ISO-8859-1" TYPE="text/css">
+<TITLE>ISUP parameters expected in SIP messages</TITLE>
+<META NAME="RFC" CONTENT="Internet Draft">
+<META NAME="Title" CONTENT="ISUP parameters expected in SIP messages">
+<META NAME="Date" CONTENT="June 1999">
+<META NAME="Last Name" CONTENT="Roach">
+
+</HEAD>
+<BODY BGCOLOR="#ffffff">
+<DIV>
+<TABLE NAME="Header" WIDTH=100%><TR><TD>Internet Engineering Task Force<BR>Internet Draft<BR>Category: N/A</TD><TD ALIGN=RIGHT>Adam Roach<BR>Ericsson Inc.<BR>June 1999<BR>Expires January 2000<BR>&lt;draft-roach-sip-isup-parameters-00.fm55&gt;</TD></TR></TABLE>
+</DIV>
+<DIV>
+<H1 CLASS="Title">
+<A NAME="pgfId-1029027"></A><A NAME="21178"></A>ISUP parameters expected in SIP messages</H1>
+</DIV>
+<DIV>
+<H1 CLASS="Heading0">
+<A NAME="pgfId-1029028"></A>Status of this Memo</H1>
+<P CLASS="Body">
+<A NAME="pgfId-1028188"></A>This document is an Internet-Draft and is in full conformance with all provisions of Section 10 of RFC 2026.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1028191"></A>Internet-Drafts are working documents of the Internet Engineering Task Force (IETF), its areas, and its working groups. Note that other groups may also distribute working documents as Internet-Drafts.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1028195"></A>Internet-Drafts are draft documents valid for a maximum of six months and may be updated, replaced, or obsoleted by other documents at any time. It is inappropriate to use Internet-Drafts as reference material or to cite them other than as &quot;work in progress.&quot;</P>
+<P CLASS="Body">
+<A NAME="pgfId-1028200"></A>To view the entire list of current Internet-Drafts, please check the &quot;1id-abstracts.txt&quot; listing contained in the Internet-Drafts Shadow Directories on ftp.is.co.za (Africa), ftp.nordu.net (Northern Europe), ftp.nis.garr.it (Southern Europe), munnari.oz.au (Pacific Rim), ftp.ietf.org (US East Coast), or ftp.isi.edu (US West Coast).</P>
+</DIV>
+<DIV>
+<H1 CLASS="Heading0">
+<A NAME="pgfId-998448"></A>Abstract</H1>
+<P CLASS="Body">
+<A NAME="pgfId-1015693"></A>To assure inter-operability between gateways which may choose to transit ISUP messages inside a SIP network, this document seeks to outline the types of ISUP messages which an implementation can sensibly expect to arrive in each given SIP message.</P>
+</DIV>
+<DIV>
+<H1 CLASS="Heading1">
+<A NAME="pgfId-998278"></A>1.	Introduction</H1>
+<P CLASS="Body">
+<A NAME="pgfId-1028255"></A>Many implementors in the voice over IP field are exploring ways in which SIP can be used for long-haul of standard telephony traffic. In this model, SIP serves as an interim signalling protocol while the call is carried over the IP network. Unfortunately, SIP does not provide fields for most message parameters found in today's telephony networks.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029134"></A>One of the dominant signalling protocols in use in modern telephony networks is the Signalling System No. 7 (SS7) ISDN User Part (ISUP). This general protocol is defined in ITU-T Recommendations Q.761 (<A HREF="draft-roach-sip-isup-parameters-00.html#17660" CLASS="XRef">ref [7]</A>), Q.762 (<A HREF="draft-roach-sip-isup-parameters-00.html#34592" CLASS="XRef">ref [8]</A>), Q.763 (<A HREF="draft-roach-sip-isup-parameters-00.html#93231" CLASS="XRef">ref [9]</A>), and Q.764 (<A HREF="draft-roach-sip-isup-parameters-00.html#84802" CLASS="XRef">ref [10]</A>). Adaptations of the ISUP protocol for the North American continent can be found in ANSI T1.113 (<A HREF="draft-roach-sip-isup-parameters-00.html#68335" CLASS="XRef">ref [6]</A>).</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029127"></A>To preserve this ISUP signalling when SIP is used between two ISUP gateways, it has been proposed that the messages sent over the SIP network would carry ISUP messages with roughly the same meaning as their SIP &quot;host&quot; messages (see <A HREF="draft-roach-sip-isup-parameters-00.html#73535" CLASS="XRef">ref [2]</A> and <A HREF="draft-roach-sip-isup-parameters-00.html#53637" CLASS="XRef">ref [5]</A>). This type of transport is commonly referred to as &quot;ISUP transparency&quot;</P>
+</DIV>
+<DIV>
+<H1 CLASS="Heading1">
+<A NAME="pgfId-998451"></A>2.	Expected ISUP Messages</H1>
+<P CLASS="Body">
+<A NAME="pgfId-1029184"></A>This chapter outlines which ISUP messages can be expected and should be handled by SIP to ISUP gateways providing an ISUP transparency function. Any ISUP messages which arrive at times other than those described below may safely be treated as an error which terminates the call.</P>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1029072"></A>2.1.	INVITE</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1029087"></A>INVITE messages may contain IAM bodies. For overlap dialing detected by the ingress gateway, they can be expected to additionally carry one or more SAM messages; multiple ISUP messages may be attached as defined in &quot;The multipart/sip-id media type&quot; (<A HREF="draft-roach-sip-isup-parameters-00.html#90944" CLASS="XRef">ref [3]</A>). [Note: it is currently unclear in this document whether such behavior is allowed]</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1029079"></A>2.2.	100 class response to INVITE</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1029088"></A>INVITE 100 class responses can be expected to carry either ACM or CPG bodies. Since 100 class responses do not change the SIP call state, gateways should allow them to carry any arbitrary ISUP messages which do not cause changes to the call state. It can be reasonably expected that 100 class responses to INVITE will not contain ANM, CON, IAM, REL, or RLC messages.</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1029080"></A>2.3.	200 class response to INVITE</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1029197"></A>INVITE 200 class responses will carry ANM or CON messages. If the implementor so desires, they may also carry ACM messages accompanied by ANM messages (the benefits of doing so are not obvious; however, there is no reason to prohibit such behavior). Multiple ISUP messages may be attached as defined in &quot;The mulitpart/sip-id media type&quot; (<A HREF="draft-roach-sip-isup-parameters-00.html#90944" CLASS="XRef">ref [3]</A>). [Note: it is currently unclear in this document whether such behavior is allowed]</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1029113"></A>2.4.	300+ response to INVITE</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1029097"></A>INVITE responses which terminate the transaction may carry any number of call terminating messages; specifically, REL, RSC, RLC, GRS, CGB, and UCIC may be expected in response to these types of messages.</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1029086"></A>2.5.	<A NAME="27718"></A>ACK</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1029098"></A>Although normally empty, ACK messages can be expected to carry RLC messages when acknowledging a 300 class or higher response. The value of providing transparency for RLC is not immediately apparent; however, there have been proposals to include, among other things, billing information in RLC messages for certain networks. SIP gateways should not preclude this capability unless absolutely necessary. As an aside, note that intervening proxies' behavior of locally acknowledging error responses will destroy the ability to carry RLC messages end to end.</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1029090"></A>2.6.	CANCEL and BYE</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1029111"></A>As in the case of INVITE error responses, any call terminating ISUP message can be expected in a CANCEL or BYE request; specifically: REL, RSC, RLC, GRS, and CGB.</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1029095"></A>2.7.	Response to CANCEL and BYE</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1029112"></A>CANCEL and BYE responses may contain RLC messages. See <A HREF="draft-roach-sip-isup-parameters-00.html#27718" CLASS="XRef">section 2.5</A> for the rationale for transporting RLC messages. Note that proxies' behavior of locally responding to CANCEL messages has the same effect as is described in that section.</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1029122"></A>2.8.	INFO</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1029170"></A>See &quot;The SIP INFO Method&quot; (<A HREF="draft-roach-sip-isup-parameters-00.html#79282" CLASS="XRef">ref [4]</A>) for information on the proposed semantics and syntax for INFO.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1028256"></A>Due to its nature, the INFO method can be expected to carry any arbitrary ISUP message; however, it can be reasonably expected that it will not contain messages that make a change to call state about which the SIP network should be aware; specifically, it is expected that INFO will not contain ACM, ANM, CON, IAM, REL, or RLC messages.</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1029224"></A>2.9.	Other Messages</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1029225"></A>It is expected that neither OPTIONS nor REGISTER requests or responses will carry ISUP payloads of any type.</P>
+</DIV>
+</DIV>
+<DIV>
+<H1 CLASS="Heading1">
+<A NAME="pgfId-998471"></A>3.	References</H1>
+<P CLASS="Reference">
+<A NAME="pgfId-1028263"></A>[1]	<A NAME="54324"></A>M. Handley/H. Schulzrinne/E. Schooler/J. Rosenberg, &quot;SIP: Session Initiation Protocol&quot;, RFC 2543, IETF; March 1999.</P>
+<P CLASS="Reference">
+<A NAME="pgfId-1029044"></A>[2]	<A NAME="73535"></A>Christian Huitema, &quot;The application/ISUP media type&quot;, Internet Draft &lt;draft-ietf-sigtran-mime-isup-00.txt&gt;, IETF; Feb. 1999. Work in progress.</P>
+<P CLASS="Reference">
+<A NAME="pgfId-1029067"></A>[3]	<A NAME="90944"></A>Christian Huitema, &quot;The multipart/sip-id media type&quot;, Internet Draft &lt;draft-ietf-mmusic-sip-multipart-00.txt&gt;, IETF; Feb. 1999. Work in progress.</P>
+<P CLASS="Reference">
+<A NAME="pgfId-1029115"></A>[4]	<A NAME="79282"></A>Steven R. Donovan, &quot;The SIP INFO Method&quot;, Internet Draft &lt;draft-ietf-mmusic-sip-info-method-00.txt&gt;, IETF; Feb. 1999. Work in progress.</P>
+<P CLASS="Reference">
+<A NAME="pgfId-1029124"></A>[5]	<A NAME="53637"></A>Eric Zimmerer, &quot;SIP+ (Inter MGC Protocol),&quot; Edition 0.0, Draft 0.1, Level 3; Dec. 1998. Work in progress.</P>
+<P CLASS="Reference">
+<A NAME="pgfId-1029045"></A>[6]	<A NAME="68335"></A>&quot;Signalling System No. 7 (SS7) -- Integrated Services Digital Network (ISDN) User Part&quot;, ANSI T1.113-1995; Jan. 1995.</P>
+<P CLASS="Reference">
+<A NAME="pgfId-1029051"></A>[7]	<A NAME="17660"></A>&quot;Functional Description of the ISDN User Part of Signalling System No. 7&quot;, ITU-T Recommendation Q.761; Mar. 1993.</P>
+<P CLASS="Reference">
+<A NAME="pgfId-1029047"></A>[8]	<A NAME="34592"></A>&quot;General Function of Messages and Signals of the ISDN User Part of Signalling System No. 7&quot;, ITU-T Recommendation Q.762; Mar. 1993.</P>
+<P CLASS="Reference">
+<A NAME="pgfId-1029048"></A>[9]	<A NAME="93231"></A>&quot;Formats and Codes of the ISDN User Part of Signalling System No. 7&quot;, ITU-T Recommendation Q.763; Mar. 1993.</P>
+<P CLASS="Reference">
+<A NAME="pgfId-1029058"></A>[10]	<A NAME="84802"></A>&quot;Formats and Codes of the ISDN User Part of Signalling System No. 7, ISDN User Part Signalling Procedures&quot;, ITU-T Recommendation Q.764; Mar. 1993.</P>
+</DIV>
+<DIV>
+<H1 CLASS="Heading1">
+<A NAME="pgfId-998279"></A>4.	Security Considerations</H1>
+<P CLASS="Body">
+<A NAME="pgfId-1028267"></A>This document introduces no new security considerations beyond those already discussed in the referenced documents.</P>
+</DIV>
+<DIV>
+<H1 CLASS="Heading1">
+<A NAME="pgfId-1028268"></A>5.	Author's Address</H1>
+<P CLASS="Body">
+<A NAME="pgfId-1028269"></A><A HREF="draft-roach-sip-isup-parameters-00.html#88493" CLASS="XRef">Adam Roach</A><BR>
+<A HREF="draft-roach-sip-isup-parameters-00.html#71684" CLASS="XRef">Ericsson Inc.</A><BR>
+Mailstop L-04<BR>
+851 International Pkwy.<BR>
+Richardson, TX 75081<BR>
+USA<BR>
+Phone: 972-583-7594<BR>
+Fax: 972-669-0154<BR>
+E-Mail: adam.roach@ericsson.com</P>
+</DIV>
+<TABLE NAME="Footer" WIDTH=100%><TR><TD>Roach</TD><TD ALIGN=RIGHT>[Page 5]</TD></TR></TABLE>
+</BODY>
+</HTML>

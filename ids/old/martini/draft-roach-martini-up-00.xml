@@ -1,0 +1,699 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE rfc SYSTEM "rfc2629.dtd" [
+    <!ENTITY rfc3261 PUBLIC '' 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.3261.xml'>
+    <!ENTITY rfc3263 PUBLIC '' 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.3263.xml'>
+    <!ENTITY rfc3265 PUBLIC '' 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.3265.xml'>
+    <!ENTITY rfc3680 PUBLIC '' 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.3680.xml'>
+    <!ENTITY rfc3903 PUBLIC '' 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.3903.xml'>
+    <!ENTITY rfc5234 PUBLIC '' 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.5234.xml'>
+
+    <!ENTITY regex PUBLIC '' 'http://xml.resource.org/public/rfc/bibxml2/reference.IEEE.1003-2.1992.xml'>
+
+    <!ENTITY draft-kaplan-martini-mixing-problems PUBLIC '' 'http://xml.resource.org/public/rfc/bibxml3/reference.I-D.draft-kaplan-martini-mixing-problems-00.xml'>
+]>
+
+<?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
+
+<?rfc toc="yes" ?>
+<?rfc compact="yes" ?>
+<?rfc sortrefs="no" ?>
+<?rfc symrefs="no"?>
+
+<rfc ipr="trust200902" docName="draft-roach-martini-up-00" category="std">
+<front>
+    <title abbrev="SIP HTTP Subscriptions">A Unified Proposal for Multiple AOR Registrations in the Session Initiation Protocol (SIP)</title>
+
+    <author initials="A. B." surname="Roach" fullname="Adam Roach">
+      <organization>Tekelec</organization>
+      <address>
+        <postal>
+          <street>17210 Campbell Rd.</street>
+          <street>Suite 250</street>
+          <city>Dallas</city> <region>TX</region> <code>75252</code>
+          <country>US</country>
+        </postal>
+        <email>adam@nostrum.com</email>
+      </address>
+    </author>
+
+    <date month="January" day="6" year="2010" />
+    <area>Real Time Applications and Infrastructure</area>
+    <workgroup>MARTINI WG</workgroup>
+
+  <abstract>
+    <t>
+      This document contains a unified proposal for solving the problems
+      related to providing dynamic SIP routing information for multiple
+      AORs with a single SIP transaction.
+      The proposed solution is designed to work both for subsets of URIs
+      within a domain, and for entire domains.
+    </t>
+  </abstract>
+</front>
+
+<middle>
+  <section title="Introduction">
+    <t>
+      One of SIP's primary functions is providing rendezvous between
+      users. By design, this rendezvous has been provided through
+      a combination of the server look-up procedures defined in
+      RFC 3263 <xref target="RFC3263"/>, and the registrar procedures
+      described in RFC 3261 <xref target="RFC3261"/>.
+    </t>
+    <t>
+      The intention of the original protocol design was that any user's
+      AOR would be handled by the authority indicated by the hostport
+      portion of the AOR. The users registered individual reachability
+      information with the this authority, which would then route
+      incoming requests accordingly.
+    </t>
+    <t>
+      In actual deployments, some SIP servers have been deployed
+      in architectures that, for various reasons, have
+      requirements to provide dynamic routing information
+      for large blocks of AORs, where all of the AORs in
+      the block were to be handled by the same server. For
+      purposes of efficiency, many of these deployments do
+      not wish to maintain separate registrations for each of
+      the AORs in the block. This leads to the desire for an
+      alternate mechanism for providing dynamic routing
+      information for blocks of AORs.
+    </t>
+    <t>
+      Because this problem has
+      certain similarities with the REGISTER operation, 
+      several non-standard, ad hoc extensions to REGISTER
+      have been developed to address this desire.
+      The document "SIP IP-PBX Registration Problems" 
+      <xref target="I-D.kaplan-martini-mixing-problems"/> describes
+      several deployed IP PBX registration techniques, along with
+      a number of problems that arise from the approaches that
+      have been implemented to date.
+    </t>
+    <t>
+      It should be noted that the similarities between bulk
+      AOR dynamic routability and the REGISTER operation are
+      somewhat superficial. In particular, with a REGISTER request,
+      a UAC is establishing a binding for a single user. Intermediaries
+      (between the UAC and the registrar) can make decisions about
+      how to treat the request based on the identity of that user.
+      Extending the REGISTER method to operate outside of
+      this model -- as has been done by the ad hoc solutions
+      mentioned earlier -- can cause issues at such intermediaries
+      that assume the standard SIP registration model.
+    </t>
+  </section>
+
+  <section title="Terminology">
+    <t>
+      This document uses the terms defined in section 2 of
+      "SIP IP-PBX Registration Problems" 
+      <xref target="I-D.kaplan-martini-mixing-problems"/>.
+    </t>
+  </section>
+
+  <section title="Mechanism Overview">
+    <t>
+      The mechanism defined in this document takes advantage
+      of the observation that there are already two defined
+      means for accessing the Location Service Database defined by
+      RFC 3261: the REGISTER mechanism (also defined by
+      RFC 3261) as well as the SIP Registrations Event Package,
+      defined in RFC 3680 <xref target='RFC3680'/>.  Of these
+      two mechanisms, REGISTER is designed to operate on a
+      single AOR at a time. By contrast, the SIP Registrations
+      Event Package was fundamentally designed to carry registration
+      information for potentially several AORs simultaneously.
+      This makes it a near perfect match for the problem of
+      maintaining dynamic routing information for multiple
+      AORs.
+    </t>
+    <t>
+      Consumers of state information for event packages make
+      use of the SUBSCRIBE and NOTIFY methods, defined in RFC 3265
+      <xref target='RFC3265'/>, to receive
+      updates whenever the state changes. Similarly, producers
+      of state information for event packages can use the
+      PUBLISH method, defined in RFC 3903 <xref target='RFC3903'/>,
+      to inform the network when state has been updated.
+    </t>
+    <t>
+      Based on the foregoing, we define a procedure whereby the
+      node responsible for registering dynamic routing information
+      for several AORs uses a PUBLISH request with the 'reg'
+      event package. This PUBLISH request indicates the AORs
+      the dynamic routing information applies to, as well as
+      the routing URI associated with each AOR.
+    </t>
+    <t>
+      While the XML body defined in RFC 3680 is semantically
+      suitable for this use, it is somewhat cumbersome in practice
+      to use for, e.g., large contiguous blocks of numbers. For
+      example, if a PBX were responsible for a block of 10,000
+      E.164-addressed endpoints, it would require a application/reginfo+xml
+      document containing 10,000 individual &lt;registration> elements.
+      To address this issue, we propose an alternate body type
+      for the 'reg' event package, which allows for concise expression
+      of this kind of AOR aggregation. This alternate body type is
+      described in <xref target='reg'/>.
+    </t>
+  </section>
+
+  <section title="Protocol">
+    <t>
+      In general, the behavior for the elements involved in
+      maintaining dynamic routing information is that defined
+      for maintaining event state with the PUBLISH request,
+      as described in RFC 3903. Behavior specific to this
+      specification is described below.
+    </t>
+    <section title="Publisher Behavior">
+      <t>
+        This section describes behavior for the UAC responsible
+        for maintaining dynamic routing information. Note that
+        this may or may not be the element that the AORs will
+        be associated with (such as an IP PBX or a PSTN gateway) --
+        it might be an arbitrary third party responsible for
+        advertising dynamic routes associated with groups of
+        AORs.
+      </t>
+      <t>
+        To advertise a dynamic route associated with an AOR,
+        the publisher sends a PUBLISH request to the dynamic routing
+        server. This PUBLISH contains a body that conveys
+        the AORs for which dynamic routing information is being
+        conveyed. This body may use either the application/reginfo+xml
+        format defined by RFC 3680, or using the compact format
+        defined in <xref target='reg'/>.
+      </t>
+      <t>
+        A successful (200-class) response to the PUBLISH indicates
+        to the publisher that the AOR dynamic routes have been
+        successfully updated. Any failure response indicates that
+        none of the routes have been accepted. If the failure response
+        code is "403," then the body of the response will contain
+        a document indicating the AORs that the publisher is authorized
+        to provide dynamic routing information for. This document is
+        in the format described in <xref target='allowed'/>.
+      </t>
+    </section>
+    <section title="Dynamic Routing Server Behavior">
+      <t>
+        When a Dynamic Routing Server (such as a proxy/registrar
+        found within an SSP) receives a PUBLISH request for
+        for the 'reg' event package, it first authenticates the
+        sending entity. This authentication may be via Digest
+        authentication, mutual TLS authentication, or some other
+        mechanism. After the sender is authenticated, the
+        Dynamic Routing Server validates the body of the
+        PUBLISH request, by making certain that the entries
+        present are syntactically valid, complete, and within
+        any applicable policies. It then updates its local
+        routing tables with the information present in the
+        body.
+      </t>
+      <t>
+        The Dynamic Routing Server applies the rules defined
+        in <xref target='regex-subset'/> to determine whether
+        the requested AORs are within the set of AORs that the
+        publisher is authorized to provide routing information for.
+      </t>
+      <t>
+        Semantically, updating the local routing tables is
+        identical to updating a Location Service database (as
+        RFC 3261 defines that term).
+      </t>
+      <t>
+        After updating its local routing tables with the information
+        present in the PUBLISH message, it responds to the
+        PUBLISH request with a 200 (OK) response.
+      </t>
+    </section>
+  </section>
+
+  <section title="Alternate Body Type for 'reg' Event Package" anchor='reg'>
+    <t>
+      To allow for compact specification of several AORs in a single
+      "reg" event package body, we define a new MIME body type.
+      This MIME type is designated "application/reginfo-bulk." Except
+      as noted, the meaning of the fields in this MIME body are identical
+      to the fields defined in RFC 3680. If omitted, the "state" field
+      is assumed to have the value of "active," and the "expires" field
+      is assumed to be identical to the "Expires" header value in the
+      PUBLISH message header.
+    </t>
+    <t>
+      This body is specified using the ABNF format defined in
+      RFC 5234 <xref target="RFC5234"/>.
+    </t>
+
+    <t>
+<figure> <artwork><![CDATA[
+reginfo-bulk-body  = version HTAB doc-state CR *reginfo-bulk-entry
+reginfo-bulk-entry = delim-char simple-regex delim-char contact 
+                     delim-char HTAB id HTAB event 
+                     [ HTAB state [ HTAB expires
+                     [ HTAB [ qvalue ] [ HTAB [ retry-after ] 
+                     [ HTAB [ callid ] [ HTAB [ cseq ] 
+                     [ HTAB [ duration-reg] 
+                     [ HTAB [ unknown-params ] 
+                     [ HTAB display-name ] ] ] ] ] ] ] ] ] CR
+version            = 1 * DIGIT
+doc-state          = "full" / "partial"
+delim-char         = "/" / "!" / ... <Any non-digit or non-flag
+                     character other than backslash '\'. All 
+                     occurances of a delim_char in a
+                     reginfo-bulk-entry must be the same
+                     character.>
+utf8-display-str   = * ( %x20-7F / 
+                        ( %xC2-DF %x80-BF ) /
+                        ( %xE0-EF 2 ( %x80-BF ) ) /
+                        ( %xF0-F4 3 ( %x80-BF ) ) )
+simple-regex       = 1 * ( OCTET )
+contact            = 1 * ( OCTET / backref )
+backref            = "\" %x31-39
+id                 = display-char
+event              = "registered" / "created" / "refreshed" /
+                     "shortened" / "expired" / "deactivated" /
+                     "probation" / "unregistered" / "rejected"
+state              = "init" / "active" / "terminated" 
+expires            = 1 * DIGIT
+qvalue             = "1.0" / ( "0." 1*4 DIGIT)
+retry-after        = 1 * DIGIT
+callid             = 1 * VCHAR
+cseq               = 1 * DIGIT
+duration-reg       = 1 * DIGIT
+unknown-params     = 1 * VCHAR
+display-name       = utf8-display-str
+]]></artwork> </figure>
+    </t>
+
+    <t>
+      The "simple-regex" field is used to indicate one or more AORs
+      to which the entry applies, and the "contact" field indicates the
+      routing information to be associated with the AORs that are
+      matched by the entry. The "simple-regex" is similar in spirit
+      to POSIX regular expressions (as defined in IEEE 1003-2
+      <xref target="IEEE.1003-2.1992"/>). However, to allow for trivial comparison
+      between requested AORs and allowed AORs, the syntax is
+      intentionally very limited.
+    </t>
+    <t>
+      Characters in the simple-regex have the following properties:
+    </t>
+    <t><list style="symbols">
+      <t> The regex characters "(" and ")" are used to indicate
+          sections of the matched string that can be used for
+          backrefs. They are ignored for the purposes of matching.
+          <vspace blankLines="1"/>
+          </t>
+      <t> The regex character "\" is used to escape the 
+          immediately following character. Instead of taking its
+          normal meaning, the character simply matches itself.
+          This includes the ability to escape the delim-char.
+          <vspace blankLines="1"/>
+          </t>
+      <t> The regex sequence "[" followed by one or more characters
+          and "]" matches any of the characters between the "[" and "]"
+          symbols. 
+          <vspace blankLines="1"/>
+          </t>
+      <t> The regex character "." matches any character.  
+          <vspace blankLines="1"/>
+      </t>
+      <t> The regex sequence "{" followed by one or more digits and "}"
+          indicates that the preceding character must be repeated exactly
+          the number of times indicated by the digit.
+          <vspace blankLines="1"/>
+          </t>
+      <t> As a special case, if a simple regex contains an "@" character, then
+          the portion of the regex preceding the first "@" character may
+          use the character "*" to mean "zero or more instances of the
+          preceding character." However, Dynamic Routing Servers MUST NOT
+          accept regular expressions of this format unless their policy
+          allows the authenticated publisher to control the routing of
+          all requests for the domain on the right-hand-side of the "@"
+          character. An unescaped "*" character after the first "@"
+          character in the simple regex is a syntax error.
+          <vspace blankLines="1"/>
+          </t>
+      <t> As with normal regular expressions, any other character matches
+          itself.  
+          </t>
+    </list></t>
+    <t>
+      The simple regexes defined in this document must match a
+      string in its entirety -- that is, the matching string
+      may not contain any leading or trailing characters. For
+      example, the simple regex "x...y" would not match the string
+      "axabcy," since the leading "a" is not represented in the
+      simple regex.
+    </t>
+    <t>
+      The preceding rules are carefully crafted to allow trivial
+      expansion of all simple regexes to a complete, exhaustive
+      list of strings that the regex can possibly match. In
+      particular, they intentionally omit the ability to indicate
+      an arbitrary number of characters, as with the POSIX regex
+      "*" character (except in the special case of domain registration).
+    </t>
+    <t>
+      OPEN ISSUE: we can achieve the same property even if we include
+      ranges of characters -- e.g., ".{2,4}" -- with a moderate increase
+      in the complexity of the operation. Do we want to do this?
+    </t>
+    <t>
+      The "contact" field contains a URI that the Location Service
+      should associate with the AOR. The "contact" field in this
+      document format may contain backref expressions of the form
+      "\1" through "\9". If present, these are replaced by the string
+      of characters enclosed by "(" and ")" in the simple regex portion
+      of the reginfo-bulk-entry. The string "\1" matches the first
+      backref expression in the simple regex (i.e., the one starting
+      with the first parenthesis); the string "\2" matches the second;
+      and so on. For example, the simple regex:
+<figure> <artwork><![CDATA[
+
+                 (A(B(C)DE)(F)G)
+
+ has backref expressions:
+
+                    \1  = ABCDEFG
+                    \2  = BCDE
+                    \3  = C
+                    \4  = F
+                    \5..\9  = error - no matching subexpression
+]]></artwork> </figure>
+    </t>
+  <!--
+    From NAPTR (RFC 2915):
+
+subst_expr   = delim-char  ere  delim-char  repl  delim-char  *flags
+delim-char   = "/" / "!" / ... <Any non-digit or non-flag character
+               other than backslash '\'. All occurances of a delim_char
+               in a subst_expr must be the same character.>
+ere          = POSIX Extended Regular Expression
+repl         = 1 * ( OCTET /  backref )
+backref      = "\" 1POS_DIGIT
+flags        = "i"
+POS_DIGIT    = %x31-39                 ; 0 is not an allowed backref
+
+   The definition of a POSIX Extended Regular Expression can be found in
+   [8], section 2.8.4.
+
+   Tab delimited, fields are:
+   /AOR/Contact/ id [state [event [expires [q]]]] 
+     all optional: retry-after callid cseq duration-registered unknown-params
+
+   If Omitted,
+     state = active
+     expires = taken from publish expiration
+     q = policy dependent at registrar
+
+   ? Simplified rules, to allow determination of whether an RE is
+     a subset of another RE?
+
+  -->
+      
+  </section>
+
+  <section title="Body Type for Indication of Allowed URIs" anchor='allowed'>
+    <t>
+      This needs more fleshing out. Basically, the format is a list
+      of simple-regexes that indicate which AORs the authenticated
+      publisher is authorized to provide routing information for.
+<figure> <artwork><![CDATA[
+reginfo-err-body = 1 * ( simple-regex CR )
+]]></artwork> </figure>
+      
+    </t>
+  </section>
+
+  <section title="Comparison of Simple Regular Expressions" anchor='regex-subset'>
+    <t>
+      In order to make policy decisions, a Dynamic Routing Server
+      must be able to trivially examine the simple regexes provided
+      in a application/reginfo-bulk body and determine whether they
+      are a proper subset of the AORs the publisher is authorized
+      to publish.
+    </t>
+    <t>
+      To determine whether a first simple regex (e.g., from a publisher) is 
+      a subset of second simple regex (e.g., a policy rule at
+      a Dynamic Routing Server), a server performs the following processing:
+    </t>
+    <t>
+      <list style="numbers">
+        <t>All unescaped instances of "(" and ")" are discarded
+        from both expressions.<vspace blankLines="1"/></t>
+        <t>All unescaped sequences of "{" followed by one or more digits
+        followed by "}" are expanded by repeating the preceding character
+        the number of times indicated by the digits (treating any sequence
+        of "[" .. "]" as a single character).<vspace blankLines="1"/></t>
+        <t>The two expressions are then compared character-by-character
+        (again treating any sequence of "[" .. "]" as a single character),
+        checking that each character in the first expression is a subset
+        of the corresponding character in the second expression, using
+        the following rules for determining subsets:
+        <vspace blankLines="1"/>
+          <list style="symbols">
+            <t> An unescaped "." character is a subset only of
+                an unescaped character ".". <vspace blankLines="1"/></t>
+            <t> A bracketed sequence is a subset of another bracketed
+                sequence containing the same list of characters (and
+                potentially others), or an unescaped character ".". <vspace blankLines="1"/></t>
+            <t> Any other character is a subset of itself, a bracketed sequence
+                containing itself, or an unescaped character ".". <vspace blankLines="1"/></t>
+          </list>
+        <vspace blankLines="1"/></t>
+        <t>As a special case: if the first expression contains an unescaped "*"
+        character preceding the first "@" character in the expression, then it
+        is can only be a subset of a second expression
+        beginning with the character sequence ".*@". If the second expression begins
+        with ".*@", then the first expression is a subset of the second expression
+        if and only if
+        the portion of the first expression following the first "@" character
+        is a subset of the portion of the second expression following
+        its first "@" character (as determined by the foregoing rules).
+        <vspace blankLines="1"/></t>
+      </list>
+    </t>
+    <t>
+      The Dynamic Routing Server communicates policy regarding allowed
+      AORs using the format defined in <xref target='allowed'/>. 
+      The matching steps defined above are performed pairwise on each of the
+      requested AORs (from the publisher) and the allowed AORs
+      (from the Dynamic Routing Server policy). If each of the requested
+      AORs are subsets of at least one of the allowed AORs,
+      then the request is within policy. Otherwise, the request
+      exceeds the authorization granted to the publisher, and the
+      Dynamic Routing Server MUST reject the PUBLISH with a 403 response.
+    </t>
+  </section>
+
+
+  <section title="Examples">
+    <t>
+      Note that, for the sake of readability, these examples
+      use sequences of spaces instead of VTAB characters
+      to delimit fields.
+    </t>
+    <section title="Range of E.164 numbers">
+      <t>
+      The following request registers the sequence of
+      E.164 numbers from +12143290000@example.com through
+      +12143290999@example.com.  It associates 
+      the AOR "sip:+12143290000@example.com" with the Contact "sip:0000@pbx.example.net,"
+      the AOR "sip:+12143290001@example.com" with the Contact "sip:0001@pbx.example.net,"
+      and so on.
+<figure> <artwork><![CDATA[
+PUBLISH sip:company@routing-server.example.com SIP/2.0
+Via: SIP/2.0/UDP server19.example.com;branch=z9hG4bKnasaii
+From: sip:pbx.example.com;tag=xyzygg
+To: sip:company@routing-server.example.com
+Call-ID: 9987@app.example.com
+CSeq: 1288 PUBLISH
+Max-Forwards: 70
+Expires: 3600
+Event: reg
+Content-Type: application/reginfo-bulk
+Content-Length: ...
+
+1 full
+/sip:+1214329(0...)@example.com/sip:\1@pbx.example.net/ 14 registered
+
+]]></artwork> </figure>
+      </t>
+    </section>
+    <section title="Entire Domain">
+      <t>
+      The following request associates all URIs in the domain
+      "example.net" with the IP address "192.0.2.5".
+<figure> <artwork><![CDATA[
+PUBLISH sip:company@routing-server.example.com SIP/2.0
+Via: SIP/2.0/UDP server19.example.com;branch=z9hG4bKnasaii
+From: sip:pbx.example.com;tag=xyzygg
+To: sip:routing-server.example.com
+Call-ID: 9987@app.example.com
+CSeq: 1288 PUBLISH
+Max-Forwards: 70
+Expires: 3600
+Event: reg
+Content-Type: application/reginfo-bulk
+Content-Length: ...
+
+1 full
+/sip:(.*)@example.net/sip:\1@192.0.2.5/ 14      registered
+
+]]></artwork> </figure>
+        
+      </t>
+    </section>
+    <section title="Many Discrete AORs">
+      <t>
+      The following request associates several named URIs with
+      the a set of named URIs.
+        
+<figure> <artwork><![CDATA[
+PUBLISH sip:company@routing-server.example.com SIP/2.0
+Via: SIP/2.0/UDP server19.example.com;branch=z9hG4bKnasaii
+From: sip:pbx.example.com;tag=xyzygg
+To: sip:company@routing-server.example.com
+Call-ID: 9987@app.example.com
+CSeq: 1288 PUBLISH
+Max-Forwards: 70
+Expires: 3600
+Event: reg
+Content-Type: application/reginfo-bulk
+Content-Length: ...
+
+1 full
+/sip:fsmith@example.net/sip:fsmith@192.0.2.5/        1   registered
+/sip:zjohnson@example.net/sip:zjohnson@192.0.2.5/    2   registered
+/sip:lwilliams@example.net/sip:lwilliams@192.0.2.5/  3   registered
+/sip:fjones@example.net/sip:fjones@192.0.2.5/        4   registered
+/sip:tbrown@example.net/sip:tbrown@192.0.2.5/        5   registered
+/sip:qdavis@example.net/sip:qdavis@192.0.2.5/        6   registered
+/sip:imiller@example.net/sip:imiller@192.0.2.5/      7   registered
+/sip:vwilson@example.net/sip:vwilson@192.0.2.5/      8   registered
+/sip:gmoore@example.net/sip:gmoore@192.0.2.5/        9   registered
+/sip:ataylor@example.net/sip:ataylor@192.0.2.5/      10  registered
+/sip:randerson@example.net/sip:randerson@192.0.2.5/  11  registered
+/sip:bthomas@example.net/sip:bthomas@192.0.2.5/      12  registered
+/sip:qjackson@example.net/sip:qjackson@192.0.2.5/    13  registered
+/sip:pwhite@example.net/sip:pwhite@192.0.2.5/        14  registered
+/sip:wharris@example.net/sip:wharris@192.0.2.5/      15  registered
+/sip:wmartin@example.net/sip:wmartin@192.0.2.5/      16  registered
+]]></artwork> </figure>
+      </t>
+    </section>
+  </section>
+
+  <section title="Issues Solved">
+    <t>
+      The document "SIP IP-PBX Registration Problems" 
+      <xref target="I-D.kaplan-martini-mixing-problems"/> describes
+      a number of problems that arise in the ad hoc solutions currently
+      deployed. This section evaluates these issues against the
+      mechanism proposed in this document.
+    </t>
+    <t>
+      <list style="hanging">
+        <t hangText="No Explicit Indicator:">
+          The mechanism in this document cannot be confused with
+          the normal registration mechanism defined in RFC 3261,
+          as it does not attempt to overload REGISTER to convey
+          bulk dynamic routing information.
+          <vspace blankLines="1"/>
+        </t>
+        <t hangText="Undefined Behavior on PAU Mismatch:">
+          By shifting the task of specifying the AORs being
+          registered from the server to the client, there is
+          no opportunity for mismatch. Policy errors may arise
+          when the client attempts to register for AORs
+          other than those it is authorized to register; however,
+          procedures for detecting and addressing these
+          conditions are provided.
+          <vspace blankLines="1"/>
+        </t>
+        <t hangText="REGISTER Response Growth:">
+          By shifting the task of specifying the AORs being
+          registered from the server to the client, normal
+          response size is maintained. Circumstances under
+          which a UDP response is required, but size precludes
+          sending a response, are precluded.
+          <vspace blankLines="1"/>
+        </t>
+        <t hangText="Illegal Wildcarding Syntax:">
+          By defining a wildcarding syntax outside the strictures
+          of SIP, the issue of valid SIP syntax is sidestepped.
+          <vspace blankLines="1"/>
+        </t>
+        <t hangText="Loss of Target Info:">
+          Because the binding from AOR to Contact URI is under
+          complete control of the requestor, and because the
+          model of proxy/registrar routing defined in RFC 3261
+          is maintained, the system exhibits the same properties
+          as it would if each user were registered individually.
+          Target information is preserved.
+          <vspace blankLines="1"/>
+        </t>
+        <t hangText="Request-URI vs. Loose-Route Mismatches:">
+          As before: because the binding from AOR to Contact URI is under
+          complete control of the requestor, and because the
+          model of proxy/registrar routing defined in RFC 3261
+          is maintained, the system exhibits the same properties
+          as it would if each user were registered individually.
+          Loose routing and Request-URI handling are kept consistent
+          with proxy/registrar handling described in RFC 3261,
+          so no mismatches can arise.
+          <vspace blankLines="1"/>
+        </t>
+        <t hangText="Authorization Policy Mismatches:">
+          Because the binding from AOR to Contact URI is under
+          control of the publisher, it can ensure that the Contact
+          URI associated with an AOR matches the Contact URIs it
+          uses for outgoing calls. This eliminates the authorization
+          policy mismatches described.
+          <vspace blankLines="1"/>
+        </t>
+        <t hangText="P-Asserted-Identity Mismatches:">
+          Because the information published by this mechanism
+          inherently mimics individual registration for each of
+          the associated AORs, the expectation that each of
+          these AORs can be used as a P-Asserted-Identity is
+          preserved, avoiding any implementation confusion
+          regarding valid values for this field.
+          <vspace blankLines="1"/>
+        </t>
+        <t hangText="Trust Domain Mismatches for Privacy/Identity:">
+          The MARTINI working group appears to be reaching
+          rough consensus that this issue is out of scope
+          and out of charter for solutions it is responsible for
+          considering. It is not analyzed with respect to the
+          proposed solution.
+          <vspace blankLines="1"/>
+        </t>
+      </list>
+    </t>
+  </section>
+
+</middle>
+
+<back>
+  <references title='Normative References'>
+    &rfc3261;
+    &rfc3263;
+    &rfc3265;
+    &rfc3680;
+    &rfc3903;
+    &rfc5234;
+    &regex;
+  </references>
+
+  <references title='Informative References'>
+    &draft-kaplan-martini-mixing-problems;
+  </references>
+</back>
+</rfc>

@@ -1,0 +1,276 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN"><HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+<META NAME="GENERATOR" CONTENT="Adobe FrameMaker 5.5/HTML Export Filter">
+<LINK REL="STYLESHEET" HREF="draft-roach-sip-acb-00.css" CHARSET="ISO-8859-1" TYPE="text/css">
+<TITLE>Automatic Call Back Service in SIP</TITLE>
+<META NAME="RFC" CONTENT="Internet Draft">
+<META NAME="Title" CONTENT="Automatic Call Back Service in SIP">
+<META NAME="Date" CONTENT="March 2000">
+<META NAME="Last Name" CONTENT="Roach">
+
+</HEAD>
+<BODY BGCOLOR="#ffffff">
+<DIV>
+<TABLE NAME="Header" WIDTH=100%><TR><TD>Internet Engineering Task Force<BR>Internet Draft<BR>Category: Informational</TD><TD ALIGN=RIGHT>Adam Roach<BR>Ericsson Inc.<BR>March 2000<BR>Expires September 2000<BR>&lt;draft-roach-sip-acb-00.fm55&gt;</TD></TR></TABLE>
+</DIV>
+<DIV>
+<H1 CLASS="Title">
+<A NAME="pgfId-1029006"></A><A NAME="21178"></A>Automatic Call Back Service in SIP</H1>
+</DIV>
+<DIV>
+<H1 CLASS="Heading0">
+<A NAME="pgfId-1029007"></A>Status of this Memo</H1>
+<P CLASS="Body">
+<A NAME="pgfId-1029013"></A>This document is an Internet-Draft and is in full conformance with all provisions of Section 10 of RFC2026.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029014"></A>Internet-Drafts are working documents of the Internet Engineering Task Force (IETF), its areas, and its working groups. Note that other groups may also distribute working documents as Internet-Drafts.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029015"></A>Internet-Drafts are draft documents valid for a maximum of six months and may be updated, replaced, or obsoleted by other documents at any time. It is inappropriate to use Internet-Drafts as reference material or cite them other than as &quot;work in progress&quot;.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029016"></A>The list of current Internet-Drafts can be accessed at http://www.ietf.org/ietf/lid-abstracts.txt</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029017"></A>The list of Internet-Draft Shadow Directories can be accessed at http://www.ietf.org/shadow.html</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029018"></A>This document is an individual submission to the IETF. Comments should be directed to the authors. </P>
+</DIV>
+<DIV>
+<H1 CLASS="Heading0">
+<A NAME="pgfId-998448"></A>Abstract</H1>
+<P CLASS="Body">
+<A NAME="pgfId-1015693"></A>This document describes a proposed implementation of an Automatic Call Back (ACB) service using SIP. This service is somtimes refered to as &quot;camp on extension,&quot; &quot;call again,&quot; &quot;automatic redial,&quot; and &quot;automatic recall.&quot;</P>
+</DIV>
+<DIV>
+<H1 CLASS="Heading1">
+<A NAME="pgfId-1029034"></A>1.	Introduction</H1>
+<P CLASS="Body">
+<A NAME="pgfId-1028255"></A>Most services that exist in the public switched telephony network (PSTN) can be implemented trivially using SIP <A HREF="draft-roach-sip-acb-00.html#53863" CLASS="XRef">[1]</A>, either by itself or with currently proposed extensions.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029033"></A>An effiicient implementation of the ACB service, however, cannot be accomplished without a mechanism for notification when a called party has become free. This document proposes a method of implementing this functionality using the SUBSCRIBE and NOTIFY methods defined in &quot;Call Event Notification in SIP&quot; <A HREF="draft-roach-sip-acb-00.html#63108" CLASS="XRef">[2]</A>.</P>
+</DIV>
+<DIV>
+<H1 CLASS="Heading1">
+<A NAME="pgfId-998471"></A>2.	Service Description</H1>
+<P CLASS="Body">
+<A NAME="pgfId-1029293"></A>Typically, the caller initiates a call in the normal fashion for their access device (e.g. dialing a number, selecting an entry from an address book application). When the user receives indication of &quot;ringing&quot; or &quot;busy,&quot; they may choose to activate the ACB service. The method of activation will vary depending on the access device. For a hardware phone, there will typically be a dedicated &quot;callback&quot; button; PC-based clients may have a menu option and/or a hot key; and PSTN bridges may play a series of prompts to guide the user in activating the service. The user receives confirmation of service activation.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029306"></A>Once the callee's  device becomes available, the caller's phone will indicate that the ACB service has been triggered. For hardware phones and PSTN bridges, this will typically be a distinctive ring; for PC-based clients, it may be an audio alert accompanied by a dialogue box.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029307"></A>The user responds to this alerting as if he were answering an incoming call. Upon doing so, he receives indication of the far end alerting, and the call proceeds as normal.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029318"></A>At any time before the ACB service is triggered by the callee's device becoming available, the caller may cancel outstanding ACM requests.</P>
+</DIV>
+<DIV>
+<H1 CLASS="Heading1">
+<A NAME="pgfId-1029420"></A>3.	&quot;Event&quot; header value</H1>
+<P CLASS="Body">
+<A NAME="pgfId-1029568"></A>This service uses an event type of &quot;terminal-free&quot; in its SUBSCRIBE and NOTIFY messages. This event is defined to occur whenever a logical terminal transitions to an  idle state (i.e. has no ongoing calls).</P>
+</DIV>
+<DIV>
+<H1 CLASS="Heading1">
+<A NAME="pgfId-1029456"></A>4.	Example Messages</H1>
+<P CLASS="Body">
+<A NAME="pgfId-1029571"></A>The following sections give example messages for various ACB-related scenarios. Some details, such as SDP bodies and &quot;Via:&quot; headers, have been omitted for the sake of clarity.</P>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1029099"></A>4.1.	Requesting notification with SUBSCRIBE (callee busy)</H2>
+<P><PRE CLASS="Preformat"><A NAME="pgfId-1029326"></A>INVITE sip:eusadam@ws592.ericsson.com SIP/2.0
+To: Adam Roach &lt;sip:adam.roach@ericsson.com&gt;
+From: Joe Public &lt;sip:joe.public@ietf.org&gt;;tag=38bec5a6-0000000a
+Call-Id: 34a6-38bec5a6-61103dd1-3@terminal17.isp.net
+CSeq: 5231 INVITE
+Contact: sip:jpublic@terminal17.isp.net
+Content-Type: application/sdp</PRE>
+<PRE CLASS="Preformat"><A NAME="pgfId-1029384"></A>SIP/2.0 486 Busy
+To: Adam Roach &lt;sip:adam.roach@ericsson.com&gt;;tag=638bec5a6758941
+From: Joe Public &lt;sip:joe.public@ietf.org&gt;;tag=38bec5a6-0000000a
+Call-Id: 34a6-38bec5a6-61103dd1-3@terminal17.isp.net
+CSeq: 5231 INVITE
+Content-Length: 0</PRE>
+<PRE CLASS="Preformat"><A NAME="pgfId-1029389"></A>ACK sip:eusadam@ws592.ericsson.com SIP/2.0
+To: Adam Roach &lt;sip:adam.roach@ericsson.com&gt;;tag=638bec5a67589416288
+From: Joe Public &lt;sip:joe.public@ietf.org&gt;;tag=38bec5a6-0000000a
+Call-Id: 34a6-38bec5a6-61103dd1-3@terminal17.isp.net
+CSeq: 5231 ACK
+Content-Length: 0</PRE>
+</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029577"></A>Notice that, since this is a non-call-related subscription, the Call-ID is unique and does not match the previous INVITE request.</P>
+<P><PRE CLASS="Preformat"><A NAME="pgfId-1029439"></A>SUBSCRIBE sip:eusadam@ws592.ericsson.com SIP/2.0
+To: Adam Roach &lt;sip:adam.roach@ericsson.com&gt;
+From: Joe Public &lt;sip:joe.public@ietf.org&gt;;tag=8a553c7c-38bebcb1
+Call-Id: 3465-38bebcb1-5e86e396-6@terminal17.isp.net
+CSeq: 16939 SUBSCRIBE
+Contact: sip:jpublic@terminal17.isp.net
+Expires: 14400
+Event: terminal-free
+Content-Length: 0</PRE>
+<PRE CLASS="Preformat"><A NAME="pgfId-1029150"></A>SIP/2.0 200 OK
+To: Adam Roach &lt;sip:adam.roach@ericsson.com&gt;;tag=346538bebcb150e
+From: Joe Public &lt;sip:joe.public@ietf.org&gt;;tag=8a553c7c-38bebcb1
+Call-Id: 3465-38bebcb1-5e86e396-6@terminal17.isp.net
+CSeq: 16939 SUBSCRIBE
+Expires: 3600
+Content-Length: 0</PRE>
+</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1029422"></A>4.2.	Requesting notification with SUBSCRIBE (no answer)</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1029607"></A>This call flow demonstrates the flow of messages if a user decides to activate the ACB service after the callee's terminal has started alerting, but before the callee answers.</P>
+<P><PRE CLASS="Preformat"><A NAME="pgfId-1029513"></A>INVITE sip:eusadam@ws592.ericsson.com SIP/2.0
+To: Adam Roach &lt;sip:adam.roach@ericsson.com&gt;
+From: Joe Public &lt;sip:joe.public@ietf.org&gt;;tag=38bec5a6-0000000a
+Call-Id: 34a6-38bec5a6-61103dd1-3@terminal17.isp.net
+CSeq: 5231 INVITE
+Contact: sip:jpublic@terminal17.isp.net
+Content-Type: application/sdp</PRE>
+<PRE CLASS="Preformat"><A NAME="pgfId-1029514"></A>SIP/2.0 180 Ringing
+To: Adam Roach &lt;sip:adam.roach@ericsson.com&gt;;tag=638bec5a6758941
+From: Joe Public &lt;sip:joe.public@ietf.org&gt;;tag=38bec5a6-0000000a
+Call-Id: 34a6-38bec5a6-61103dd1-3@terminal17.isp.net
+CSeq: 5231 INVITE
+Content-Length: 0</PRE>
+</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029580"></A>Notice that, since this is a non-call-related subscription, the Call-ID is unique and does not match the previous INVITE request.</P>
+<P><PRE CLASS="Preformat"><A NAME="pgfId-1029578"></A>SUBSCRIBE sip:eusadam@ws592.ericsson.com SIP/2.0
+To: Adam Roach &lt;sip:adam.roach@ericsson.com&gt;
+From: Joe Public &lt;sip:joe.public@ietf.org&gt;;tag=8a553c7c-38bebcb
+Call-Id: 3465-38bebcb1-5e86e396-6@terminal17.isp.net
+CSeq: 16939 SUBSCRIBE
+Contact: sip:jpublic@terminal17.isp.net
+Expires: 14400
+Event: terminal-free
+Content-Length: 0</PRE>
+<PRE CLASS="Preformat"><A NAME="pgfId-1029517"></A>SIP/2.0 200 OK
+To: Adam Roach &lt;sip:adam.roach@ericsson.com&gt;;tag=346538bebcb150e
+From: Joe Public &lt;sip:joe.public@ietf.org&gt;;tag=8a553c7c-38bebcb
+Call-Id: 3465-38bebcb1-5e86e396-6@terminal17.isp.net
+CSeq: 16939 SUBSCRIBE
+Expires: 3600
+Content-Length: 0</PRE>
+</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029587"></A>Now that the service is activated, the client can cancel the INVITE transaction.</P>
+<P><PRE CLASS="Preformat"><A NAME="pgfId-1029528"></A>CANCEL sip:eusadam@ws592.ericsson.com SIP/2.0
+To: Adam Roach &lt;sip:adam.roach@ericsson.com&gt;
+From: Joe Public &lt;sip:joe.public@ietf.org&gt;;tag=38bec5a6-0000000a
+Call-Id: 34a6-38bec5a6-61103dd1-3@terminal17.isp.net
+CSeq: 5231 CANCEL
+Content-Length: 0</PRE>
+<PRE CLASS="Preformat"><A NAME="pgfId-1029559"></A>SIP/2.0 200 OK
+To: Adam Roach &lt;sip:adam.roach@ericsson.com&gt;
+From: Joe Public &lt;sip:joe.public@ietf.org&gt;;tag=38bec5a6-0000000a
+Call-Id: 34a6-38bec5a6-61103dd1-3@terminal17.isp.net
+CSeq: 5231 CANCEL
+Content-Length: 0</PRE>
+<PRE CLASS="Preformat"><A NAME="pgfId-1029551"></A>SIP/2.0 487 Call Canceled
+To: Adam Roach &lt;sip:adam.roach@ericsson.com&gt;;tag=638bec5a6758941
+From: Joe Public &lt;sip:joe.public@ietf.org&gt;;tag=38bec5a6-0000000a
+Call-Id: 34a6-38bec5a6-61103dd1-3@terminal17.isp.net
+CSeq: 5231 INVITE
+Content-Length: 0</PRE>
+<PRE CLASS="Preformat"><A NAME="pgfId-1029542"></A>ACK sip:eusadam@ws592.ericsson.com SIP/2.0
+To: Adam Roach &lt;sip:adam.roach@ericsson.com&gt;;tag=638bec5a6758941
+From: Joe Public &lt;sip:joe.public@ietf.org&gt;;tag=38bec5a6-0000000a
+Call-Id: 34a6-38bec5a6-61103dd1-3@terminal17.isp.net
+CSeq: 5231 ACK
+Content-Length: 0</PRE>
+</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1029081"></A>4.3.	Conveying terminal-free status using NOTIFY</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1029200"></A>The NOTIFY request contains the same Call-ID as the SUBSCRIBE that asked for it.</P>
+<P><PRE CLASS="Preformat"><A NAME="pgfId-1029594"></A>NOTIFY sip:jpublic@terminal17.isp.net SIP/2.0
+To: Joe Public &lt;sip:joe.public@ietf.org&gt;
+From: Adam Roach &lt;sip:adam.roach@ericsson.com&gt;;tag=38bebe1c-4953
+Call-Id: 3465-38bebcb1-5e86e396-6@terminal17.isp.net
+CSeq: 15739 NOTIFY
+Contact: sip:eusadam@ws592.ericsson.com
+Event: terminal-free
+Content-Length: 0
+
+SIP/2.0 200 OK
+To: Joe Public &lt;sip:joe.public@ietf.org&gt;;tag=346e38bebe434931fb51f33
+From: Adam Roach &lt;sip:adam.roach@ericsson.com&gt;;tag=38bebe1c-4953
+Call-Id: 3465-38bebcb1-5e86e396-6@terminal17.isp.net
+CSeq: 15739 NOTIFY
+Content-Length: 0</PRE>
+</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029612"></A>Now, a brand new INVITE is issued to begin a call to the newly-freed terminal.</P>
+<P><PRE CLASS="Preformat"><A NAME="pgfId-1029470"></A>INVITE sip:eusadam@ws592.ericsson.com SIP/2.0
+To: Adam Roach &lt;sip:adam.roach@ericsson.com&gt;
+From: Joe Public &lt;sip:joe.public@ietf.org&gt;;tag=38bec5a6-7265482
+Call-Id: 355e-38bed457-269136c2-6@terminal17.isp.net
+CSeq: 17960 INVITE
+Contact: sip:jpublic@terminal17.isp.net
+Content-Type: application/sdp</PRE>
+<PRE CLASS="Preformat"><A NAME="pgfId-1029471"></A>SIP/2.0 180 Ringing
+To: Adam Roach &lt;sip:adam.roach@ericsson.com&gt;;tag=55e38bed45700ca
+From: Joe Public &lt;sip:joe.public@ietf.org&gt;;tag=38bec5a6-7265482
+Call-Id: 355e-38bed457-269136c2-63@terminal17.isp.net
+CSeq: 17960 INVITE
+Content-Length: 0</PRE>
+</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029486"></A>The call now continues as normal</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1029082"></A>4.4.	Cancelling a previous ACB request</H2>
+<P><PRE CLASS="Preformat"><A NAME="pgfId-1029218"></A>SUBSCRIBE sip:eusadam@ws592.ericsson.com SIP/2.0
+To: Adam Roach &lt;sip:adam.roach@ericsson.com&gt;
+From: Joe Public &lt;sip:joe.public@ietf.org&gt;;tag=8f21337c-38a8191
+Call-Id: 3465-38bebcb1-5e86e396-6@terminal17.isp.net
+CSeq: 7837 SUBSCRIBE
+Contact: sip:jpublic@terminal17.isp.net
+Expires: 0
+Event: terminal-free
+Content-Length: 0</PRE>
+<PRE CLASS="Preformat"><A NAME="pgfId-1029219"></A>SIP/2.0 200 OK
+To: Adam Roach &lt;sip:adam.roach@ericsson.com&gt;;tag=213985987f9872a
+From: Joe Public &lt;sip:joe.public@ietf.org&gt;;tag=8f21337c-38a8191
+Call-Id: 3465-38bebcb1-5e86e396-6@terminal17.isp.net
+CSeq: 7837 SUBSCRIBE
+Expires: 0
+Content-Length: 0</PRE>
+</P>
+</DIV>
+</DIV>
+<DIV>
+<H1 CLASS="Heading1">
+<A NAME="pgfId-1029086"></A>5.	References</H1>
+<P CLASS="Reference">
+<A NAME="pgfId-1029037"></A>[1]	<A NAME="53863"></A>M. Handley/H. Schulzrinne/E. Schooler/J. Rosenberg, &quot;SIP: Session Initiation Protocol&quot;, RFC 2543, IETF; March 1999.</P>
+<P CLASS="Reference">
+<A NAME="pgfId-1029455"></A>[2]	<A NAME="63108"></A>Adam Roach, &quot;Event Notification in SIP&quot;, Internet Draft &lt;draft-roach-sip-subcribe-notify-00.txt&gt;, IETF; March 2000. Work in progress.</P>
+</DIV>
+<DIV>
+<H1 CLASS="Heading1">
+<A NAME="pgfId-998279"></A>6.	Security Considerations</H1>
+<P CLASS="Body">
+<A NAME="pgfId-1028267"></A>This draft intoduces no security considerations beyond those discussed in the referenced documents.</P>
+</DIV>
+<DIV>
+<H1 CLASS="Heading1">
+<A NAME="pgfId-1028268"></A>7.	Author's Address</H1>
+<P CLASS="Body">
+<A NAME="pgfId-1028269"></A><A HREF="draft-roach-sip-acb-00.html#88493" CLASS="XRef">Adam Roach</A><BR>
+<A HREF="draft-roach-sip-acb-00.html#71684" CLASS="XRef">Ericsson Inc.</A><BR>
+Mailstop L-04<BR>
+851 International Pkwy.<BR>
+Richardson, TX 75081<BR>
+USA<BR>
+Phone: 972-583-7594<BR>
+Fax: 972-669-0154<BR>
+E-Mail: adam.roach@ericsson.com</P>
+</DIV>
+<TABLE NAME="Footer" WIDTH=100%><TR><TD>Roach</TD><TD ALIGN=RIGHT>[Page 6]</TD></TR></TABLE>
+</BODY>
+</HTML>

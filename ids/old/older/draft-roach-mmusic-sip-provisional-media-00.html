@@ -1,0 +1,526 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN"><HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+<META NAME="GENERATOR" CONTENT="Adobe FrameMaker 5.5/HTML Export Filter">
+<LINK REL="STYLESHEET" HREF="draft-roach-mmusic-sip-provisional-media-00.css" CHARSET="ISO-8859-1" TYPE="text/css">
+<TITLE>Provisional SIP Responses with Media</TITLE>
+<META NAME="RFC" CONTENT="Internet Draft">
+<META NAME="Title" CONTENT="Provisional SIP Responses with Media">
+<META NAME="Date" CONTENT="June 1999">
+<META NAME="Last Name" CONTENT="Roach">
+
+</HEAD>
+<BODY BGCOLOR="#ffffff">
+<DIV>
+<TABLE NAME="Header" WIDTH=100%><TR><TD>Internet Engineering Task Force<BR>Internet Draft<BR>Category: N/A</TD><TD ALIGN=RIGHT>Adam Roach<BR>Ericsson Inc.<BR>June 1999<BR>Expires January 2000<BR>&lt;draft-roach-mmusic-sip-provisional-media-00.fm55&gt;</TD></TR></TABLE>
+</DIV>
+<DIV>
+<H1 CLASS="Title">
+<A NAME="pgfId-1029006"></A><A NAME="21178"></A>Provisional SIP Responses with Media</H1>
+</DIV>
+<DIV>
+<H1 CLASS="Heading0">
+<A NAME="pgfId-1029007"></A>Status of this Memo</H1>
+<P CLASS="Body">
+<A NAME="pgfId-1028188"></A>This document is an Internet-Draft and is in full conformance with all provisions of Section 10 of RFC 2026.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1028191"></A>Internet-Drafts are working documents of the Internet Engineering Task Force (IETF), its areas, and its working groups. Note that other groups may also distribute working documents as Internet-Drafts.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1028195"></A>Internet-Drafts are draft documents valid for a maximum of six months and may be updated, replaced, or obsoleted by other documents at any time. It is inappropriate to use Internet-Drafts as reference material or to cite them other than as &quot;work in progress.&quot;</P>
+<P CLASS="Body">
+<A NAME="pgfId-1028200"></A>To view the entire list of current Internet-Drafts, please check the &quot;1id-abstracts.txt&quot; listing contained in the Internet-Drafts Shadow Directories on ftp.is.co.za (Africa), ftp.nordu.net (Northern Europe), ftp.nis.garr.it (Southern Europe), munnari.oz.au (Pacific Rim), ftp.ietf.org (US East Coast), or ftp.isi.edu (US West Coast).</P>
+</DIV>
+<DIV>
+<H1 CLASS="Heading0">
+<A NAME="pgfId-998448"></A>Abstract</H1>
+<P CLASS="Body">
+<A NAME="pgfId-1015693"></A>This document describes an extension of the SIP protocol which allows transit of SDP in provisional INVITE responses, so that media may be transferred before a final connection is established.</P>
+</DIV>
+<DIV>
+<H1 CLASS="Heading1">
+<A NAME="pgfId-1029030"></A>1.	Introduction</H1>
+<P CLASS="Body">
+<A NAME="pgfId-1029034"></A>When SIP (<A HREF="draft-roach-mmusic-sip-provisional-media-00.html#54324" CLASS="XRef">ref [1]</A>) is used for inter-operation with standard telephony networks, several situations arise when it is useful to allow temporary media sessions to be established before an INVITE request has finished. While these have certain useful applications in interaction with &quot;standard&quot; SIP clients (e.g. PC software applications), they provide the greatest benefit when used between gateways to a standard telephony network.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029074"></A>The usefulness of being able to send media before a final connection is established can be demonstrated for the existing 100 class INVITE responses:</P>
+<P CLASS="List">
+<A NAME="pgfId-1029075"></A>100 Trying -- Some localities provide a call progressing tone between dialing and ringing (known as a &quot;comfort tone&quot;) under certain circumstances.</P>
+<P CLASS="List">
+<A NAME="pgfId-1029076"></A>180 Ringing -- Public network telephony users are accustomed to hearing a remotely generated ringtone when placing a call. For example, when dialing a British destination from the U.S., users expect to hear a British ringtone, not a U.S. one. Additionally, this allows users to hear a &quot;caller waiting tone&quot; when applicable (see <A HREF="draft-roach-mmusic-sip-provisional-media-00.html#69907" CLASS="XRef">ref [4]</A>).</P>
+<P CLASS="List">
+<A NAME="pgfId-1029077"></A>181 Call is being Forwarded -- PBX systems will often provide a voice announcement or tone indicating that a call is being forwarded from the dialed number.</P>
+<P CLASS="List">
+<A NAME="pgfId-1029078"></A>182 Call is Queued -- PBX systems will typically produce an announcement, hold music, or a tone to indicate to users that they are queued.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029103"></A>The simplest method by which this type of media transit can be accomplished is by including session description information for the temporary media streams in these provisional responses.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029782"></A>Temporary media streams which do not fit into the above categories can be sent in a &quot;183&quot; provisional response; see <A HREF="draft-roach-mmusic-sip-provisional-media-00.html#25681" CLASS="XRef">section 3, &quot;New Provisional 183 Status Code&quot;</A>.</P>
+</DIV>
+<DIV>
+<H1 CLASS="Heading1">
+<A NAME="pgfId-1029112"></A>2.	Format and Usage</H1>
+<P CLASS="Body">
+<A NAME="pgfId-1029287"></A>The format of provisional responses with media sessions is identical to that of 200-class responses to INVITE requests, except as noted in <A HREF="draft-roach-mmusic-sip-provisional-media-00.html#67422" CLASS="XRef">section 4, &quot;Reliability&quot;</A>; the body will contain a session description (usually SDP; see <A HREF="draft-roach-mmusic-sip-provisional-media-00.html#42151" CLASS="XRef">ref [2]</A>).</P>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1029291"></A>2.1.	Temporary Media Establishment</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1029275"></A>Under most circumstances, provisional responses used to initiate temporary media will contain SDP which is a subset of the media description presented in the INVITE message (as in normal 200 responses).</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029284"></A>If the original INVITE message contains no media description, the server will generate SDP representing the capabilities it requires for media transmission and include it in the provisional response. The client will include a final SDP in its acknowledgement of receipt (see <A HREF="draft-roach-mmusic-sip-provisional-media-00.html#67422" CLASS="XRef">section 4, &quot;Reliability&quot;</A>).</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029320"></A>In both cases, the media streams will be established after the message confirming receipt of the provisional response has been sent (from the client's perspective) or received (from the server's perspective).</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029316"></A>The designation of media capabilities in a provisional response has no implications on the capabilities of any subsequent temporary connections or the final connection. Each media stream is negotiated relative to the session description in the original INVITE request (or lack thereof).</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1029121"></A>2.2.	Change of Temporary Media</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1029233"></A>After a temporary media stream has been established, its parameters can be changed by sending further provisional responses which also contain session descriptions. Upon receipt of such a response, the client MUST immediately cease transmission of media relating to the old temporary stream. As before, the new temporary media stream is established after acknowledgement of the provisional response.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029321"></A>Provisional responses which contain no session description SHOULD NOT have an effect on any currently established temporary media stream.</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1029122"></A>2.3.	Discontinuation of Temporary Media</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1029234"></A>Sending of temporary media MUST be discontinued upon the sending (from the server's perspective) or the receipt (from the client's perspective) of any INVITE final response.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029322"></A>A temporary media stream can also be discontinued by sending a provisional response which contains a session description with all media stream port numbers set to zero.</P>
+</DIV>
+</DIV>
+<DIV>
+<H1 CLASS="Heading1">
+<A NAME="pgfId-1029116"></A>3.	<A NAME="25681"></A>New Provisional 183 Status Code</H1>
+<P CLASS="Body">
+<A NAME="pgfId-1029778"></A>To allow for transmission of temporary media which does not correspond to the four provisional status codes defined in the SIP RFC (<A HREF="draft-roach-mmusic-sip-provisional-media-00.html#54324" CLASS="XRef">ref [1]</A>), this protocol extension defines one additional response code of &quot;183.&quot;</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029807"></A>183 can be used for any arbitrary in-band communication of call status. It SHOULD NOT, however, be used to convey ringing, forwarding, or call queueing situations.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029787"></A>No suggested text is provided for the 183 status code; instead, implementors SHOULD include a text representation of the information conveyed by the media stream. In the case of a recorded announcement, this text SHOULD be the text of the announcement. For a tone, this text SHOULD be either the name of the tone as defined in E.182 (<A HREF="draft-roach-mmusic-sip-provisional-media-00.html#69907" CLASS="XRef">ref [4]</A>) (e.g. &quot;Payphone Recognition Tone&quot;) or a description of the condition the tone is attempting to report (e.g. &quot;The Called Party is a Payphone&quot;).</P>
+</DIV>
+<DIV>
+<H1 CLASS="Heading1">
+<A NAME="pgfId-1029775"></A>4.	<A NAME="67422"></A>Reliability</H1>
+<P CLASS="Body">
+<A NAME="pgfId-1029204"></A>Clients which understand this extension MUST also understand the extension described in &quot;Reliability of Provisional Responses in SIP&quot; (<A HREF="draft-roach-mmusic-sip-provisional-media-00.html#68900" CLASS="XRef">ref [3]</A>) and will indicate that they require reliable transmission of provisional responses in Require: and Proxy-Require: headers.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029249"></A>If a server requires the ability to deliver provisional media, but the client INVITE does not contain an appropriate Requires: header, the server will respond with a &quot;403 Forbidden&quot; response which contains a &quot;Warning:&quot; header. The value of the warning code will be reserved from the IANA at a later date. The warning header will indicate that reliable responses are required for communication with the server. Clients understanding the warning code SHOULD then automatically re-issue the INVITE request with appropriate headers.</P>
+</DIV>
+<DIV>
+<H1 CLASS="Heading1">
+<A NAME="pgfId-1029178"></A>5.	Media Negotiation Failure for Temporary Media</H1>
+<P CLASS="Body">
+<A NAME="pgfId-1029229"></A>If no acceptable media type is available in the client's INVITE request session description, the server MAY return a &quot;406 Not Acceptable&quot; message; the alternative is to forgo the transmission of provisional media. While it is perhaps a more appropriate error code, &quot;606 Not Acceptable&quot; is not suggested, owing to its properties of terminating any ongoing searches.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029331"></A>If the client finds the session description proposed by the server in a provisional response unacceptable, its acknowledgement SHOULD contain a session description with all media stream port numbers set to zero. A server which receives such a message MAY respond with a &quot;406 Not Acceptable&quot; message; the alternative is to forgo the transmission of provisional media.</P>
+</DIV>
+<DIV>
+<H1 CLASS="Heading1">
+<A NAME="pgfId-1029228"></A>6.	Examples</H1>
+<P CLASS="Body">
+<A NAME="pgfId-1029366"></A>Only the relevant headers have been included in the following examples. Notably, the mandatory parameters Call-ID and CSeq are not shown.</P>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1029230"></A>6.1.	Remote Ringtone, Followed by &quot;Queued&quot; Announcement</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1029358"></A>Client to server:</P>
+<P CLASS="Code">
+<A NAME="pgfId-1029369"></A>INVITE sip:+12145551212@bell.com SIP/2.0<BR>
+RAck: 0<BR>
+To: sip:+12145551212@bell.com<BR>
+From: sip:+15125559876@domain.com<BR>
+Require: org.ietf.sip.reliable-100<BR>
+Proxy-Require: org.ietf.sip.reliable-100<BR>
+Content-Type: application/sdp</P>
+<P CLASS="Code">
+<A NAME="pgfId-1029375"></A>v=0<BR>
+o=- 929142225 929142225 IN IP4 vgw.domain.com<BR>
+c=IN IP4 vgw.domain.com<BR>
+M=audio 49152 RTP/AVP 0 1<BR>
+a=rtpmap:0 PCMU/8000<BR>
+a=rtpmap:1 1016/8000<BR>
+</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029392"></A>Server to client:</P>
+<P CLASS="Code">
+<A NAME="pgfId-1029395"></A>SIP/2.0 180 Ringing<BR>
+RSeq: 1<BR>
+To: sip:+12145551212@bell.com<BR>
+From: sip:+15125559876@domain.com<BR>
+Content-Type: application/sdp</P>
+<P CLASS="Code">
+<A NAME="pgfId-1029439"></A>v=0<BR>
+o=- 929142942 929142942 IN IP4 media.bell.com<BR>
+c=IN IP4 media.bell.com<BR>
+M=audio 49180 RTP/AVP 0<BR>
+a=rtpmap:0 PCMU/8000<BR>
+</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029412"></A>Client to server:</P>
+<P CLASS="Code">
+<A NAME="pgfId-1029413"></A>INVITE sip:+12145551212@bell.com SIP/2.0<BR>
+RAck: 1<BR>
+To: sip:+12145551212@bell.com<BR>
+From: sip:+15125559876@domain.com<BR>
+Require: org.ietf.sip.reliable-100<BR>
+Proxy-Require: org.ietf.sip.reliable-100<BR>
+</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029410"></A>[Remote ringing tone is played]</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029427"></A>Server to client:</P>
+<P CLASS="Code">
+<A NAME="pgfId-1029428"></A>SIP/2.0 182 Call is queued; est. wait is 5 minutes<BR>
+RSeq: 2<BR>
+To: sip:+12145551212@bell.com<BR>
+From: sip:+15125559876@domain.com<BR>
+Content-Type: application/sdp</P>
+<P CLASS="Code">
+<A NAME="pgfId-1029429"></A>v=0<BR>
+o=- 929143057 929143057 IN IP4 media.bell.com<BR>
+c=IN IP4 media.bell.com<BR>
+M=audio 49180 RTP/AVP 1<BR>
+a=rtpmap:1 1016/8000<BR>
+</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029425"></A>[Ring tone is discontinued]</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029474"></A>Client to server:</P>
+<P CLASS="Code">
+<A NAME="pgfId-1029475"></A>INVITE sip:+12145551212@bell.com SIP/2.0<BR>
+RAck: 2<BR>
+To: sip:+12145551212@bell.com<BR>
+From: sip:+15125559876@domain.com<BR>
+Require: org.ietf.sip.reliable-100<BR>
+Proxy-Require: org.ietf.sip.reliable-100<BR>
+</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029480"></A>[&quot;Your call is queued&quot; announcement is played, followed by hold music]</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029483"></A>Server to client:</P>
+<P CLASS="Code">
+<A NAME="pgfId-1029484"></A>SIP/2.0 200 OK<BR>
+To: sip:+12145551212@bell.com<BR>
+From: sip:+15125559876@domain.com<BR>
+Content-Type: application/sdp</P>
+<P CLASS="Code">
+<A NAME="pgfId-1029494"></A>v=0<BR>
+o=- 929143373 929143373 IN IP4 vgw.bell.com<BR>
+c=IN IP4 mg.bell.com<BR>
+M=audio 49199 RTP/AVP 1<BR>
+a=rtpmap:1 1016/8000<BR>
+</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029495"></A>[Hold music is discontinued]</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029513"></A>Client to server:</P>
+<P CLASS="Code">
+<A NAME="pgfId-1029514"></A>ACK sip:+12145551212@bell.com SIP/2.0<BR>
+To: sip:+12145551212@bell.com<BR>
+From: sip:+15125559876@domain.com<BR>
+</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029511"></A>[Final media stream is established]</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029774"></A>&nbsp;</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1029496"></A>6.2.	Remote Announcement: &quot;Call is being forwarded,&quot; local ring tone.</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1029523"></A>Client to server:</P>
+<P CLASS="Code">
+<A NAME="pgfId-1029524"></A>INVITE sip:+12145551212@bell.com SIP/2.0<BR>
+RAck: 0<BR>
+To: sip:+12145551212@bell.com<BR>
+From: sip:+15125559876@domain.com<BR>
+Require: org.ietf.sip.reliable-100<BR>
+Proxy-Require: org.ietf.sip.reliable-100<BR>
+Content-Type: application/sdp</P>
+<P CLASS="Code">
+<A NAME="pgfId-1029525"></A>v=0<BR>
+o=- 929142225 929142225 IN IP4 vgw.domain.com<BR>
+c=IN IP4 vgw.domain.com<BR>
+M=audio 49152 RTP/AVP 0 1<BR>
+a=rtpmap:0 PCMU/8000<BR>
+a=rtpmap:1 1016/8000<BR>
+</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029526"></A>Server to client:</P>
+<P CLASS="Code">
+<A NAME="pgfId-1029527"></A>SIP/2.0 180 Call is being forwarded<BR>
+RSeq: 1<BR>
+To: sip:+12145551212@bell.com<BR>
+From: sip:+15125559876@domain.com<BR>
+Content-Type: application/sdp</P>
+<P CLASS="Code">
+<A NAME="pgfId-1029537"></A>v=0<BR>
+o=- 929142942 929142942 IN IP4 media.bell.com<BR>
+c=IN IP4 media.bell.com<BR>
+M=audio 49180 RTP/AVP 0<BR>
+a=rtpmap:0 PCMU/8000<BR>
+</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029549"></A>Client to server:</P>
+<P CLASS="Code">
+<A NAME="pgfId-1029550"></A>INVITE sip:+12145551212@bell.com SIP/2.0<BR>
+RAck: 1<BR>
+To: sip:+12145551212@bell.com<BR>
+From: sip:+15125559876@domain.com<BR>
+Require: org.ietf.sip.reliable-100<BR>
+Proxy-Require: org.ietf.sip.reliable-100<BR>
+</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029538"></A>[Announcement plays: &quot;Your call is being forwarded to a phone outside the company's premises. Please wait.&quot;]</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029560"></A>Server to client:</P>
+<P CLASS="Code">
+<A NAME="pgfId-1029561"></A>SIP/2.0 180 Ringing<BR>
+RSeq: 2<BR>
+To: sip:+12145551212@bell.com<BR>
+From: sip:+15125559876@domain.com<BR>
+Content-Type: application/sdp</P>
+<P CLASS="Code">
+<A NAME="pgfId-1029574"></A>v=0<BR>
+o=- 929143373 929143373 IN IP4 media.bell.com<BR>
+c=IN IP4 media.bell.com<BR>
+M=audio 0 RTP/AVP 0<BR>
+</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029558"></A>[Media stream is discontinued. Local ring-tone is generated by the client towards the PSTN user.]</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029579"></A>Client to server:</P>
+<P CLASS="Code">
+<A NAME="pgfId-1029583"></A>INVITE sip:+12145551212@bell.com SIP/2.0<BR>
+RAck: 2<BR>
+To: sip:+12145551212@bell.com<BR>
+From: sip:+15125559876@domain.com<BR>
+Require: org.ietf.sip.reliable-100<BR>
+Proxy-Require: org.ietf.sip.reliable-100<BR>
+</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029588"></A>Server to client:</P>
+<P CLASS="Code">
+<A NAME="pgfId-1029589"></A>SIP/2.0 200 OK<BR>
+To: sip:+12145551212@bell.com<BR>
+From: sip:+15125559876@domain.com<BR>
+Content-Type: application/sdp</P>
+<P CLASS="Code">
+<A NAME="pgfId-1029590"></A>v=0<BR>
+o=- 929143373 929143373 IN IP4 vgw.bell.com<BR>
+c=IN IP4 mg.bell.com<BR>
+M=audio 49199 RTP/AVP 1<BR>
+a=rtpmap:1 1016/8000<BR>
+</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029592"></A>Client to server:</P>
+<P CLASS="Code">
+<A NAME="pgfId-1029593"></A>ACK sip:+12145551212@bell.com SIP/2.0<BR>
+To: sip:+12145551212@bell.com<BR>
+From: sip:+15125559876@domain.com<BR>
+</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029594"></A>[Final media stream is established]</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029773"></A>&nbsp;</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1029539"></A>6.3.	Reliable Provisional Responses not specified, but supported</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1029640"></A>Client to server:</P>
+<P CLASS="Code">
+<A NAME="pgfId-1029641"></A>INVITE sip:+12145551212@bell.com SIP/2.0<BR>
+To: sip:+12145551212@bell.com<BR>
+From: sip:+15125559876@domain.com<BR>
+Content-Type: application/sdp</P>
+<P CLASS="Code">
+<A NAME="pgfId-1029642"></A>v=0<BR>
+o=- 929142225 929142225 IN IP4 vgw.domain.com<BR>
+c=IN IP4 vgw.domain.com<BR>
+M=audio 49152 RTP/AVP 0 1<BR>
+a=rtpmap:0 PCMU/8000<BR>
+a=rtpmap:1 1016/8000<BR>
+</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029643"></A>Server to client (the 395 warning code is only an example; an actual number will be reserved from the IANA as this draft progresses):</P>
+<P CLASS="Code">
+<A NAME="pgfId-1029644"></A>SIP/2.0 403 Forbidden<BR>
+To: sip:+12145551212@bell.com<BR>
+From: sip:+15125559876@domain.com<BR>
+Warning: 395 bell.com &quot;Incompatible Client&quot;<BR>
+</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029645"></A>Client to server:</P>
+<P CLASS="Code">
+<A NAME="pgfId-1029646"></A>ACK sip:+12145551212@bell.com SIP/2.0<BR>
+To: sip:+12145551212@bell.com<BR>
+From: sip:+15125559876@domain.com<BR>
+</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029652"></A>Client to server (no user interaction required):</P>
+<P CLASS="Code">
+<A NAME="pgfId-1029653"></A>INVITE sip:+12145551212@bell.com SIP/2.0<BR>
+RAck: 0<BR>
+To: sip:+12145551212@bell.com<BR>
+From: sip:+15125559876@domain.com<BR>
+Require: org.ietf.sip.reliable-100<BR>
+Proxy-Require: org.ietf.sip.reliable-100<BR>
+Content-Type: application/sdp</P>
+<P CLASS="Code">
+<A NAME="pgfId-1029654"></A>v=0<BR>
+o=- 929142225 929142225 IN IP4 vgw.domain.com<BR>
+c=IN IP4 vgw.domain.com<BR>
+M=audio 49152 RTP/AVP 0 1<BR>
+a=rtpmap:0 PCMU/8000<BR>
+a=rtpmap:1 1016/8000<BR>
+</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029638"></A>Call continues normally from here.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029772"></A>&nbsp;</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1029637"></A>6.4.	Server Side Media Failure</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1029609"></A>Client to server:</P>
+<P CLASS="Code">
+<A NAME="pgfId-1029610"></A>INVITE sip:+12145551212@bell.com SIP/2.0<BR>
+RAck: 0<BR>
+To: sip:+12145551212@bell.com<BR>
+From: sip:+15125559876@domain.com<BR>
+Require: org.ietf.sip.reliable-100<BR>
+Proxy-Require: org.ietf.sip.reliable-100<BR>
+Content-Type: application/sdp</P>
+<P CLASS="Code">
+<A NAME="pgfId-1029611"></A>v=0<BR>
+o=- 929142225 929142225 IN IP4 vgw.domain.com<BR>
+c=IN IP4 vgw.domain.com<BR>
+M=audio 49152 RTP/AVP 0 1<BR>
+a=rtpmap:0 PCMU/8000<BR>
+a=rtpmap:1 1016/8000<BR>
+</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029615"></A>Server to client:</P>
+<P CLASS="Code">
+<A NAME="pgfId-1029630"></A>SIP/2.0 406 No codecs match<BR>
+To: sip:+12145551212@bell.com<BR>
+From: sip:+15125559876@domain.com<BR>
+</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029632"></A>Client to server:</P>
+<P CLASS="Code">
+<A NAME="pgfId-1029619"></A>ACK sip:+12145551212@bell.com SIP/2.0<BR>
+To: sip:+12145551212@bell.com<BR>
+From: sip:+15125559876@domain.com<BR>
+</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029607"></A>&nbsp;</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1029333"></A>6.5.	Client Side Media Failure</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1029664"></A>Client to server:</P>
+<P CLASS="Code">
+<A NAME="pgfId-1029662"></A>INVITE sip:+12145551212@bell.com SIP/2.0<BR>
+RAck: 0<BR>
+To: sip:+12145551212@bell.com<BR>
+From: sip:+15125559876@domain.com<BR>
+Require: org.ietf.sip.reliable-100<BR>
+Proxy-Require: org.ietf.sip.reliable-100<BR>
+</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029673"></A>Server to client:</P>
+<P CLASS="Code">
+<A NAME="pgfId-1029674"></A>SIP/2.0 180 Ringing<BR>
+RSeq: 1<BR>
+To: sip:+12145551212@bell.com<BR>
+From: sip:+15125559876@domain.com<BR>
+Content-Type: application/sdp</P>
+<P CLASS="Code">
+<A NAME="pgfId-1029675"></A>v=0<BR>
+o=- 929142942 929142942 IN IP4 media.bell.com<BR>
+c=IN IP4 media.bell.com<BR>
+M=audio 49180 RTP/AVP 0<BR>
+a=rtpmap:0 PCMU/8000<BR>
+</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029679"></A>Client to server:</P>
+<P CLASS="Code">
+<A NAME="pgfId-1029695"></A>INVITE sip:+12145551212@bell.com SIP/2.0<BR>
+RAck: 1<BR>
+To: sip:+12145551212@bell.com<BR>
+From: sip:+15125559876@domain.com<BR>
+Require: org.ietf.sip.reliable-100<BR>
+Proxy-Require: org.ietf.sip.reliable-100<BR>
+Content-Type: application/sdp</P>
+<P CLASS="Code">
+<A NAME="pgfId-1029693"></A>v=0<BR>
+o=- 929144697 929144697 IN IP4 vgw.domain.com<BR>
+c=IN IP4 vgw.domain.com<BR>
+M=audio 0 RTP/AVP 0<BR>
+</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029715"></A>Server to client:</P>
+<P CLASS="Code">
+<A NAME="pgfId-1029716"></A>SIP/2.0 406 No codecs match<BR>
+To: sip:+12145551212@bell.com<BR>
+From: sip:+15125559876@domain.com<BR>
+</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029717"></A>Client to server:</P>
+<P CLASS="Code">
+<A NAME="pgfId-1029718"></A>ACK sip:+12145551212@bell.com SIP/2.0<BR>
+To: sip:+12145551212@bell.com<BR>
+From: sip:+15125559876@domain.com<BR>
+</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029671"></A>&nbsp;</P>
+</DIV>
+</DIV>
+<DIV>
+<H1 CLASS="Heading1">
+<A NAME="pgfId-1029661"></A>7.	Security Considerations</H1>
+<P CLASS="Body">
+<A NAME="pgfId-1029179"></A>When this extension is used by PSTN gateways, care must be taken that provisional responses with media descriptions are accepted only from trusted nodes in the network. Most gateway implementations will operate such that only final connections will trigger billing (since billing for ringtone or announcements doesn't generally make sense). If provisional media is accepted from arbitrary nodes, a limited level of free service may be stolen by clients which have been programmed to return provisional responses with media description instead of final responses.</P>
+</DIV>
+<DIV>
+<H1 CLASS="Heading1">
+<A NAME="pgfId-998471"></A>8.	References</H1>
+<P CLASS="Reference">
+<A NAME="pgfId-1029160"></A>[1]	<A NAME="54324"></A>M. Handley/H. Schulzrinne/E. Schooler/J. Rosenberg, &quot;SIP: Session Initiation Protocol&quot;, RFC 2543, IETF; March 1999.</P>
+<P CLASS="Reference">
+<A NAME="pgfId-1029250"></A>[2]	<A NAME="42151"></A>M. Handley/V. Jacobson, &quot;SDP: Session Description Protocol&quot;, RFC 2327, IETF; April 1998.</P>
+<P CLASS="Reference">
+<A NAME="pgfId-1029161"></A>[3]	<A NAME="68900"></A>J. Rosenberg/H. Schulzrinne, &quot;Reliability of Provisional Responses in SIP&quot;, Internet Draft &lt;draft-ietf-mmusic-sip-100rel-01.txt&gt;, IETF; May 1999. Work in progress.</P>
+<P CLASS="Reference">
+<A NAME="pgfId-1029163"></A>[4]	<A NAME="69907"></A>&quot;Application of Tones and Recorded Announcements in Telephone Services&quot;, ITU-T Recommendation E.182; 1993</P>
+</DIV>
+<DIV>
+<H1 CLASS="Heading1">
+<A NAME="pgfId-1028268"></A>9.	Acknowledgements</H1>
+<P CLASS="Body">
+<A NAME="pgfId-1029815"></A>I must express my gratitude to John Hearty, Sean Olson, and Eric Havens for their feedback on this document.</P>
+</DIV>
+<DIV>
+<H1 CLASS="Heading1">
+<A NAME="pgfId-1029814"></A>10.	Author's Address</H1>
+<P CLASS="Body">
+<A NAME="pgfId-1028269"></A><A HREF="draft-roach-mmusic-sip-provisional-media-00.html#88493" CLASS="XRef">Adam Roach</A><BR>
+<A HREF="draft-roach-mmusic-sip-provisional-media-00.html#71684" CLASS="XRef">Ericsson Inc.</A><BR>
+Mailstop L-04<BR>
+851 International Pkwy.<BR>
+Richardson, TX 75081<BR>
+USA<BR>
+Phone: +1 972-583-7594<BR>
+Fax: +1 972-669-0154<BR>
+E-Mail: adam.roach@ericsson.com</P>
+</DIV>
+<TABLE NAME="Footer" WIDTH=100%><TR><TD>Roach</TD><TD ALIGN=RIGHT>[Page 13]</TD></TR></TABLE>
+</BODY>
+</HTML>

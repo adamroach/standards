@@ -1,0 +1,64 @@
+        <section title="Event Package Name">
+          <t>
+          </t>
+        </section>
+
+        <section title="Event Package Parameters">
+          <t>
+          </t>
+        </section>
+
+        <section title="SUBSCRIBE Bodies">
+          <t>
+          </t>
+        </section>
+
+        <section title="Subscription Duration">
+          <t>
+          </t>
+        </section>
+
+        <section title="NOTIFY Bodies">
+          <t>
+          </t>
+        </section>
+
+        <section title="Notifier processing of SUBSCRIBE requests">
+          <t>
+          </t>
+        </section>
+
+        <section title="Notifier generation of NOTIFY requests">
+          <t>
+          </t>
+        </section>
+
+        <section title="Subscriber processing of NOTIFY requests">
+          <t>
+          </t>
+        </section>
+
+        <section title="Handling of forked requests">
+          <t>
+          </t>
+        </section>
+
+        <section title="Rate of notifications">
+          <t>
+          </t>
+        </section>
+
+        <section title="State Agents">
+          <t>
+          </t>
+        </section>
+
+        <section title="Examples">
+          <t>
+          </t>
+        </section>
+
+        <section title="Use of URIs to Retrieve State">
+          <t>
+          </t>
+        </section>

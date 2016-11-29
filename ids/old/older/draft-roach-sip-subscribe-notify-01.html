@@ -1,0 +1,515 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN"><HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+<META NAME="GENERATOR" CONTENT="Adobe FrameMaker 5.5/HTML Export Filter">
+<LINK REL="STYLESHEET" HREF="draft-roach-sip-subscribe-notify-01.css" CHARSET="ISO-8859-1" TYPE="text/css">
+<TITLE>Event Notification in SIP</TITLE>
+<META NAME="RFC" CONTENT="Internet Draft">
+<META NAME="Title" CONTENT="Event Notification in SIP">
+<META NAME="Date" CONTENT="October 2000">
+<META NAME="Last Name" CONTENT="Roach">
+
+</HEAD>
+<BODY BGCOLOR="#ffffff">
+<DIV>
+<TABLE NAME="Header" WIDTH=100%><TR><TD>Internet Engineering Task Force<BR>Internet Draft<BR>Category: Standards Track</TD><TD ALIGN=RIGHT>Adam Roach<BR>Ericsson Inc.<BR>October 2000<BR>Expires March 2001<BR>&lt;draft-roach-sip-subscribe-notify-01.fm55&gt;</TD></TR></TABLE>
+</DIV>
+<DIV>
+<H1 CLASS="Title">
+<A NAME="pgfId-1029006"></A><A NAME="21178"></A>Event Notification in SIP</H1>
+</DIV>
+<DIV>
+<H1 CLASS="Heading0">
+<A NAME="pgfId-1029007"></A>Status of this Memo</H1>
+<P CLASS="Body">
+<A NAME="pgfId-1029013"></A>This document is an Internet-Draft and is in full conformance with all provisions of Section 10 of RFC2026.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029014"></A>Internet-Drafts are working documents of the Internet Engineering Task Force (IETF), its areas, and its working groups. Note that other groups may also distribute working documents as Internet-Drafts.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029015"></A>Internet-Drafts are draft documents valid for a maximum of six months and may be updated, replaced, or obsoleted by other documents at any time. It is inappropriate to use Internet-Drafts as reference material or cite them other than as &quot;work in progress&quot;.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029016"></A>The list of current Internet-Drafts can be accessed at http://www.ietf.org/ietf/lid-abstracts.txt</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029017"></A>The list of Internet-Draft Shadow Directories can be accessed at http://www.ietf.org/shadow.html</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029018"></A>This document is an individual submission to the IETF. Comments should be directed to the authors. </P>
+</DIV>
+<DIV>
+<H1 CLASS="Heading0">
+<A NAME="pgfId-1029451"></A>Abstract</H1>
+<P CLASS="Body">
+<A NAME="pgfId-1029452"></A>This document describes an extension to the Session Initiation Protocol (SIP) <A HREF="draft-roach-sip-subscribe-notify-01.html#53863" CLASS="XRef">[1]</A>. The purpose of this extension is to provide a generic and extensible framework by which SIP nodes can request notification from remote nodes indicating that certain events have occurred.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1030060"></A>Concrete uses of the mechanism described in this document may be standardized in the future.</P>
+</DIV>
+<DIV>
+<H1 CLASS="Heading1">
+<A NAME="pgfId-1030062"></A>1.	Table of Contents</H1>
+</DIV>
+<DIV>
+<H1 CLASS="Heading1">
+<A NAME="pgfId-1031355"></A>2.	Introduction</H1>
+<P CLASS="Body">
+<A NAME="pgfId-1030063"></A>The ability to request asynchronous notification of events proves useful in many types of services for which cooperation between end-nodes is required. Examples of such services include automatic callback services (based on terminal state events), buddy lists (based on user presence events), message waiting indications (based on mailbox state change events), and PINT status (based on call state events).</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029545"></A>The methods described in this document allow a framework by which notification of these events can be ordered.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1030126"></A>Note that the event notification mechanisms defined herein are NOT intended to be a general-purpose infrastructure for all classes of event subscription and notification. Meeting requirements for the general problem set of subscription and notification is far too complex for a single protocol. Our goal is to provide a general framework for event notification which is not so complex as to be unusable for simple features, but which is still flexible enough to provide powerful services. However, extensions based on this framework may define arbitrarily complex rules which govern the subscription and notification for the events or classes of events they describe.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1031210"></A>Note that this draft does not describe an extension which may be used directly; it must be extended by other drafts (herein referred to as &quot;extension drafts&quot; and &quot;event packages.&quot;) In object-oriented design terminology, it may be thought of as an abstract base class which must be derived into an instantiatable class by further extensions. Guidelines for creating these extensions are described in section <A HREF="draft-roach-sip-subscribe-notify-01.html#68360" CLASS="XRef">3.</A></P>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1030419"></A>2.1.	Overview of Operation</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1030590"></A>The general concept is that entities in the network can subscribe to resource or call state for various resources or calls in the network, and those entities (or entities acting on their behalf) can send notifications when those states change.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1030625"></A>A typical flow of messages would be:</P>
+<P><PRE CLASS="Preformat"><A NAME="pgfId-1030591"></A>Subscriber          Notifier
+    |-----SUBSCRIBE----&gt;|     Request state subscription
+    |&lt;-------200--------|     Return current state information
+    |&lt;------NOTIFY----- |     Return current state information
+    |--------200-------&gt;|
+    |&lt;------NOTIFY----- |     Return current state information
+    |--------200-------&gt;|</PRE>
+</P>
+<P CLASS="Body">
+<A NAME="pgfId-1030615"></A>The subscriber and notifier entities need not necessarily be UAs, but often will be.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1030626"></A>Subscriptions are expired and must be refreshed in exactly the same manner as registrations (see RFC 2543 <A HREF="draft-roach-sip-subscribe-notify-01.html#53863" CLASS="XRef">[1]</A>).</P>
+</DIV>
+</DIV>
+<DIV>
+<H1 CLASS="Heading1">
+<A NAME="pgfId-1030421"></A>3.	<A NAME="68360"></A>Extension Considerations</H1>
+<P CLASS="Body">
+<A NAME="pgfId-1030394"></A>This section covers several issues which should be taken into consideration when SIP extensions based on SUBSCRIBE and NOTIFY are proposed.</P>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1030382"></A>3.1.	Appropriateness of Usage</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1030383"></A>When using the methods described in this draft for event notification, it is important to consider: is SIP an appropriate mechanism for the problem set? Is SIP being selected because of some unique feature provided by the protocol (e.g. user mobility), or merely because &quot;it can be done?&quot; If you find yourself defining SIP extensions for notifications related to, for example, network management or the temperature inside your car's engine, you may want to reconsider your selection of protocols.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1030384"></A>Those interested in extending the mechanism defined in this document are urged to read &quot;Guidelines for Authors of SIP Extensions&quot;<A HREF="draft-roach-sip-subscribe-notify-01.html#42297" CLASS="XRef">[3]</A> for further guidance regarding appropriate uses of SIP.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1030388"></A>Further, it is expected that this mechanism is not to be used in applications where the frequency of reportable events is excessively rapid (e.g. more than about once per second). A SIP network is generally going to be provisioned for a reasonable signalling volume; sending a notification every time a user's GPS position changes by one hundreth of a second could easily overload such a network.</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1030380"></A>3.2.	Additional Guidelines</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1030393"></A>When writing extensions based on SUBSCRIBE and NOTIFY, it is important to consider the type of information which will be conveyed during a notification.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1030401"></A>A natural temptation is to convey merely the event (e.g. &quot;a new voice message just arrived&quot;) without accompanying state (e.g. &quot;7 total voice messages&quot;). This complicates implementation of subscribing entities (since they have to maintain complete state for the entity to which they have subscribed), and also is particularly susceptible to synchronization problems.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1030941"></A>It is therefore suggested that extensions are designed so as to notify of new state when an event occurs. In the circumstances that state may not be sufficient for a particular class of events, the extensions should include complete state information along with the event that occurred. (For example, &quot;no customer service representatives available&quot; may not be as useful &quot;no customer service representatives available; representative sip:46@cs.xyz.int just logged off&quot;.)</P>
+</DIV>
+</DIV>
+<DIV>
+<H1 CLASS="Heading1">
+<A NAME="pgfId-1030942"></A>4.	Syntax</H1>
+<P CLASS="Body">
+<A NAME="pgfId-1030119"></A>This section describes the syntax extensions required for event notification in SIP. Semantics are described in section <A HREF="draft-roach-sip-subscribe-notify-01.html#45552" CLASS="XRef">5.</A></P>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1030118"></A>4.1.	<A NAME="28355"></A>New Methods</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1029812"></A>This document describes two new SIP methods: &quot;SUBSCRIBE&quot; and &quot;NOTIFY.&quot;</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029795"></A>This table expands on tables 4 and 5 in RFC 2543 <A HREF="draft-roach-sip-subscribe-notify-01.html#53863" CLASS="XRef">[1]</A>.</P>
+<P><PRE CLASS="Preformat"><A NAME="pgfId-1029599"></A>Header                    Where    SUB NOT
+------                    -----    --- ---
+Accept                      R       o   o
+Accept-Encoding             R       o   o
+Accept-Language             R       o   o
+Allow                      200      -   -
+Allow                      405      o   o
+Authorization               R       o   o
+Call-ID                    gc       m   m
+Contact                     R       m   -
+Contact                    1xx      m   o
+Contact                    2xx      m   o
+Contact                    3xx      m   m
+Contact                    485      o   o
+Content-Encoding            e       o   o
+Content-Length              e       o   o
+Content-Type                e       *   *
+CSeq                       gc       m   m
+Date                        g       o   o
+Encryption                  g       o   o
+Expires                     g       o   o
+From                       gc       m   m
+Hide                        R       o   o
+Max-Forwards                R       o   o
+Organization                g       o   o
+Priority                    R       o   o
+Proxy-Authenticate         407      o   o
+Proxy-Authorization         R       o   o
+Proxy-Require               R       o   o
+Require                     R       o   o
+Retry-After                 R       -   -
+Retry-After            404,480,486  o   o
+Retry-After                503      o   o
+Retry-After              600,603    o   o
+Response-Key                R       o   o
+Record-Route                R       o   o
+Record-Route               2xx      o   o
+Route                       R       o   o
+Server                      r       o   o
+Subject                     R       o   o
+Timestamp                   g       o   o
+To                        gc(1)     m   m
+Unsupported                420      o   o
+User-Agent                  g       o   o
+Via                       gc(2)     m   m
+Warning                     r       o   o
+WWW-Authenticate           401      o   o</PRE>
+</P>
+<DIV>
+<H3 CLASS="Heading3">
+<A NAME="pgfId-1029828"></A>4.1.1.	SUBSCRIBE method</H3>
+<P CLASS="Body">
+<A NAME="pgfId-1029914"></A>&quot;SUBSCRIBE&quot; is added to the definition of the element &quot;Method&quot; in the SIP message grammar.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1030877"></A>Like all SIP method names, the SUBSCRIBE method name is case sensitive. The SUBSCRIBE method is used to request asynchronous notification of an event or set of events at a later time.</P>
+</DIV>
+<DIV>
+<H3 CLASS="Heading3">
+<A NAME="pgfId-1029430"></A>4.1.2.	NOTIFY method</H3>
+<P CLASS="Body">
+<A NAME="pgfId-1029920"></A>&quot;NOTIFY&quot; is added to the definition of the element &quot;Method&quot; in the SIP message grammar.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029801"></A>The NOTIFY method is used to notify a SIP node that an event which has been requested by an earlier SUBSCRIBE method has occurred. It may also provide further details about the event.</P>
+</DIV>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1030219"></A>4.2.	New Headers</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1030234"></A>This table expands on tables 4 and 5 in RFC 2543 <A HREF="draft-roach-sip-subscribe-notify-01.html#53863" CLASS="XRef">[1]</A>, as amended by the changes described in section <A HREF="draft-roach-sip-subscribe-notify-01.html#28355" CLASS="XRef">4.1.</A></P>
+<P><PRE CLASS="Preformat"><A NAME="pgfId-1030785"></A>Header field         where  proxy ACK BYE CAN INV OPT REG SUB NOT
+-----------------------------------------------------------------
+Allow-Events           g           o   o   o   o   o   o   o   o
+Event                  R           -   -   -   -   -   -   m   m
+Event                  r           -   -   -   -   -   -   m   -</PRE>
+</P>
+<DIV>
+<H3 CLASS="Heading3">
+<A NAME="pgfId-1030787"></A>4.2.1.	<A NAME="49211"></A>&quot;Event&quot; header</H3>
+<P CLASS="Body">
+<A NAME="pgfId-1030788"></A>The following header is defined for the purposes of this extension.</P>
+<P><PRE CLASS="Preformat"><A NAME="pgfId-1030480"></A>Event       =  &quot;Event&quot; &quot;:&quot; event-type
+               *(( &quot;;&quot; parameter-name [&quot;=&quot; token] )
+               ( &quot;;&quot; parameter-name [&quot;=&quot; quoted-string] ))
+event-type  =  token</PRE>
+</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029515"></A>Event is added to the definition of the element &quot;general-header&quot; in the SIP message grammar.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029929"></A>This document does not define values for event-types. These values will be defined in further extensions that take advantage of the SUBSCRIBE and NOTIFY methods, and SHOULD be registered with the IANA.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1030287"></A>Note that experimental event types may be created by prepending the organization's internet domain, with the field order reversed (e.g. &quot;Event: com.ericsson.foo&quot;).</P>
+</DIV>
+<DIV>
+<H3 CLASS="Heading3">
+<A NAME="pgfId-1030156"></A>4.2.2.	&quot;Allow-Events&quot; Header</H3>
+<P CLASS="Body">
+<A NAME="pgfId-1030157"></A>The following header is defined for the purposes of this extension.</P>
+<P><PRE CLASS="Preformat"><A NAME="pgfId-1030197"></A>Allow-Events =  &quot;Allow-Events&quot; &quot;:&quot; 1#event-type</PRE>
+</P>
+<P CLASS="Body">
+<A NAME="pgfId-1030198"></A>Allow-Events is added to the definition of the element &quot;general-header&quot; in the SIP message grammar.</P>
+</DIV>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1030770"></A>4.3.	&quot;489 Bad Event&quot; Response Code</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1030771"></A>The 489 event response is added to the &quot;Client-Error&quot; header field definition:</P>
+<P><PRE CLASS="Preformat"><A NAME="pgfId-1030772"></A>Client-Error = &quot;400&quot;  ; Bad Request
+             ...
+             | &quot;489&quot;  ; Bad Event</PRE>
+</P>
+<P CLASS="Body">
+<A NAME="pgfId-1030776"></A>&quot;489 Bad Event&quot; is used to indicate that the server did not understand the event class specified in a &quot;Event&quot; header field.</P>
+</DIV>
+</DIV>
+<DIV>
+<H1 CLASS="Heading1">
+<A NAME="pgfId-1029079"></A>5.	<A NAME="45552"></A>Node Behavior</H1>
+<P CLASS="Body">
+<A NAME="pgfId-1029869"></A>Unless noted otherwise, call-member SUBSCRIBE and NOTIFY requests follow the same protocol rules governing the usage of tags, Route, Record-Route, Via handling, retransmission, reliability, CSeq handling, Contact handling, and message formatting as those defined in RFC 2543 <A HREF="draft-roach-sip-subscribe-notify-01.html#53863" CLASS="XRef">[1]</A> for BYE.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029873"></A>Similarly, unless noted otherwise, third-party SUBSCRIBE and NOTIFY requests follow the same protocol rules as those defined in RFC 2543 <A HREF="draft-roach-sip-subscribe-notify-01.html#53863" CLASS="XRef">[1]</A> for OPTIONS.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1030954"></A>Note that neither SUBSCRIBE nor NOTIFY necessitate the use of &quot;Require&quot; or &quot;Proxy-Require&quot; headers; similarly, there is no token defined for &quot;Supported&quot; headers. If necessary, clients may probe for the support of SUBSCRIBE and NOTIFY using the OPTIONS request defined in RFC2543.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1030955"></A>For the purposes of generality, both SUBSCRIBE and NOTIFY MAY be canceled; however, doing so is not recommended. Sucessfully cancelled SUBSCRIBE and NOTIFY requests MUST be completed with a &quot;487 Request Cancelled&quot; response; the server acts as if the request were never received.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1030037"></A>SUBSCRIBE and NOTIFY have two slightly different uses: (1) subscription to and notification of events by nodes which are involved in an ongoing call with the node from which notification is being requested, and (2) subscription to and notification of events by nodes which are not actively involved as an endpoint in an ongoing call with the node from which notification is being ordered. For the purposes of brevity, these situations will be referred to as &quot;call-member&quot; and &quot;third-party&quot; respectively.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1030038"></A>Further, third-party SUBSCRIBE and NOTIFY requests may relate to call-related events (e.g. &quot;call terminated&quot;) or resource-related events (e.g. &quot;terminal free,&quot; or &quot;user present&quot;).</P>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1029989"></A>5.1.	Description of SUBSCRIBE Behavior</H2>
+<DIV>
+<H3 CLASS="Heading3">
+<A NAME="pgfId-1030023"></A>5.1.1.	Correlation to legs, calls, and terminals</H3>
+<P CLASS="Body">
+<A NAME="pgfId-1030030"></A>A subscription is uniquely identified by the combination of the To, Call-ID and the From field in the SUBSCRIBE request. Refreshes of subscriptions SHOULD reuse the same Call-ID if possible, since subscriptions are uniquely identified at presence servers using the Call-ID. Two subscriptions from the same user, for the same user, but with different Call-IDs, are considered different subscriptions. Note this is exactly the same as usage of Call-ID in registrations.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1030909"></A>Call-member SUBSCRIBE requests will be correlated in the same way that any other call-related request is (e.g. BYE) using To, From, and Call-ID; these subscriptions will generally be used to request information about the specific call.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1030024"></A>Third-party SUBSCRIBE requests will not correlate to any previously-existing call leg in the server. The Call-ID of resource-related requests will be unique to the SUBSCRIBE and any subsequent NOTIFY requests.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1030025"></A>Third-party SUBSCRIBE requests may also request information about call-related events by specifying a Call-ID that is known to have significance to the UAS. Proxies in the call-setup path may obtain this Call-ID by examining the messages they proxy; other methods of obtaining the Call-ID of an ongoing call are outside the scope of this document.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1030093"></A>Note that third-party subscriptions have security implications; see section <A HREF="draft-roach-sip-subscribe-notify-01.html#67345" CLASS="XRef">7.</A></P>
+</DIV>
+<DIV>
+<H3 CLASS="Heading3">
+<A NAME="pgfId-1030002"></A>5.1.2.	Subscription duration</H3>
+<P CLASS="Body">
+<A NAME="pgfId-1029937"></A>All SUBSCRIBE requests are required to contain an &quot;Expires&quot; header. This header specifies for how long the subscription is to remain in effect. The 200 response to a SUBSCRIBE request also MUST contain an &quot;Expires&quot; header. The period of time in the response MAY be shorter than specified in the request, but MUST NOT be longer. The period of time in the response is the one which defines the duration of the subscription.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029993"></A>Similar to REGISTER requests, SUBSCRIBE requests may be renewed at any time to prevent them from expiring at the end of the &quot;Expires&quot; period. These renewals will contain a the same &quot;To,&quot; &quot;From,&quot; and &quot;Call-ID&quot; as the original request, and an incremented &quot;CSeq&quot; number. Subscriptions may similarly be cancelled by re-issuing them with an &quot;Expires: 0&quot; header.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029946"></A>Further, call-related SUBSCRIBE requests (as opposed to resource-related) are automatically expired at the end of the call to which they relate (from the point of view of the device receiving the SUBSCRIBE request), regardless of the &quot;Expire&quot; values in the SUBSCRIBE response.</P>
+</DIV>
+<DIV>
+<H3 CLASS="Heading3">
+<A NAME="pgfId-1030276"></A>5.1.3.	<A NAME="28631"></A>Identification of Subscribed Events and Event Classes</H3>
+<P CLASS="Body">
+<A NAME="pgfId-1030277"></A>Identification of events is provided by three pieces of information: Request URI, Event Type, and (optionally) message body.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1030278"></A>The Request URI of a SUBSCRIBE request, most importantly, contains enough information to route the request to the appropriate entity. It also contains enough information to identify the resource for which event notification is desired, but not necessarily enough information to uniquely identify the nature of the event (e.g. &quot;sip:adam.roach@ericsson.com&quot; would be an appropriate URI to subscribe to for my presence state; it would also be an appropriate URI to subscribe to the state of my voice mailbox).</P>
+<P CLASS="Body">
+<A NAME="pgfId-1030279"></A>The &quot;Event&quot; header will contain a single opaque token which identifies the event or class of events for which a subscription is being requested. This token will be registered with the IANA and will correspond to an extension draft which further describes the semantics of the event or event class.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1030447"></A>The &quot;Event&quot; header is considered mandatory for the purposes of this document. However, to maintain compatibility with PINT (see <A HREF="draft-roach-sip-subscribe-notify-01.html#33731" CLASS="XRef">[4]</A>), servers MAY interpret a SUBSCRIBE request with no &quot;Event&quot; header as requesting a subscription to PINT events. If the servers do not support PINT, they SHOULD instead return &quot;400 Bad Request.&quot;</P>
+<P CLASS="Body">
+<A NAME="pgfId-1030286"></A>If the extension draft to which the event token corresponds defines behavior associated with the body of its SUBSCRIBE requests, those semantics apply. It is expected that most, but not all, extension drafts will define syntax and semantics for SUBSCRIBE method bodies; these bodies will typically modify, expand, filter, throttle, and/or set thresholds for the class of events being requested. Designers of extensions are strongly encouraged to re-use existing MIME types for message bodies where feasible.</P>
+</DIV>
+<DIV>
+<H3 CLASS="Heading3">
+<A NAME="pgfId-1030003"></A>5.1.4.	<A NAME="67836"></A>Subscriber SUBSCRIBE Behavior</H3>
+<P CLASS="Body">
+<A NAME="pgfId-1030687"></A>When a subscriber wishes to subscribe to (or refresh a subscription to) an event class, he forms a SUBSCRIBE message. If the subscription is call related, the call leg information (To, From, Call-ID) are used in the SUBSCRIBE message as if it were any other request related to the call.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1030688"></A>For non-call-related subscriptions, the call leg information is formed as if for an original INVITE: the Call-ID is a new call ID with the syntax described in RFC 2543; the To: field indicates the suscribed resource's persistent address (which will generally match the Request URI used to form the message); and the From: field will indicate the subscriber's persistent address (typically sip:user@machine for UAs, or sip:machine for other entities).</P>
+<P CLASS="Body">
+<A NAME="pgfId-1030693"></A>In both circumstances, the Contact: header(s) will contain information about where resulting NOTIFY requests are to be sent. Multiple Contact headers are allowed, and indicate multiple destinations to which NOTIFY requests should be sent.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1030703"></A>Subscribers MUST include an &quot;Event&quot; header in SUBSCRIBE requests, indicating to which event or class of events they are subscribing. This header contains a token which corresponds to an extension draft; see section <A HREF="draft-roach-sip-subscribe-notify-01.html#28631" CLASS="XRef">5.1.3.</A></P>
+<P CLASS="Body">
+<A NAME="pgfId-1031000"></A>SUBSCRIBE requests MAY contain an &quot;Accept&quot; header. This header, if present, indicates the body formats allowed in both the SUBSCRIBE response and subsequent NOTIFY requests. Extensions making use of SUBSCRIBE and NOTIFY MUST define the behavior for SUBSCRIBE requests without &quot;Accept&quot; headers; usually, this will connote a single, default body type.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1030694"></A>SUBSCRIBE requests MUST contain either an &quot;Expires&quot; header or &quot;expires&quot; parameters on each &quot;Contact:&quot; header. These expires values indicate the duration of the subscription. The formatting of these is described in RFC 2543. In order to keep subscriptions effective beyond the duration communicated in the &quot;Expires&quot; header, subscribers need to refresh subscriptions on a periodic basis. This refreshing is performed in the same way as REGISTER refreshes: the To, From, and Call-ID match those in the SUBSCRIBE being refreshed, while the CSeq number is incremented.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1030722"></A>Similar to REGISTER, a natural consequence of this scheme is that a SUBSCRIBE with an &quot;Expires&quot; of 0 constitutes a request to unsubscribe from an event.</P>
+</DIV>
+<DIV>
+<H3 CLASS="Heading3">
+<A NAME="pgfId-1030332"></A>5.1.5.	Proxy SUBSCRIBE Behavior</H3>
+<P CLASS="Body">
+<A NAME="pgfId-1030639"></A>Proxies need no additional behavior beyond that described in RFC 2543 <A HREF="draft-roach-sip-subscribe-notify-01.html#53863" CLASS="XRef">[1]</A> to support SUBSCRIBE. Note that SIP proxies may also act as subscribers or notifiers, as appropriate; under these circumstances, they will act as described in <A HREF="draft-roach-sip-subscribe-notify-01.html#67836" CLASS="XRef">5.1.4.</A> and <A HREF="draft-roach-sip-subscribe-notify-01.html#76046" CLASS="XRef">5.1.6.</A></P>
+<P CLASS="Body">
+<A NAME="pgfId-1030830"></A>Due to CSeq space collisions, proxies are not allowed to initiate call-member SUBSCRIBE requests, and must instead use third-party SUBSCRIBE requests. They do so by including the Call-ID of an ongoing call. The &quot;From:&quot; field in this case, however, would indicate an address owned by the proxy, and thus be considered a new leg by the UAS.</P>
+</DIV>
+<DIV>
+<H3 CLASS="Heading3">
+<A NAME="pgfId-1030496"></A>5.1.6.	<A NAME="76046"></A>Notifier SUBSCRIBE Behavior</H3>
+<P CLASS="Body">
+<A NAME="pgfId-1030742"></A>Upon receipt of a SUBSCRIBE request, the notifier MAY send a 100 response.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1031008"></A>The notifier SHOULD check that the event package specified in the &quot;Event&quot; header is understood. If not, the notifier SHOULD return a &quot;489 Bad Event&quot; response to indicate that the specified event/event class is not understood.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1030749"></A>The notifier SHOULD also perform any necessary authentication per its local policy. SIP authentication mechanisms are discussed in RFC2543. Note that, even if the notifier node typically acts as a proxy, authentication for SUBSCRIBE requests will always be performed via a &quot;401&quot; response, not a &quot;407;&quot; notifiers always act as a user agents when accepting subscriptions and sending notifications.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1031104"></A>If authorization is not granted, the notifier SHOULD return a 600-class response.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1030750"></A>Once the notifier has determined that it understands the event package and that the authenticated subscriber is authorized to subscribe, it returns a &quot;200 OK&quot; response. The &quot;Expires&quot; values present in this 200 response behave in the same way as they do in REGISTER responses: the server MAY shorten the interval, but MUST not increase it.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1031097"></A>The exact contents of a 200 class response will vary according to the event package being used; in general, though, such responses should contain the same amount of state information as in a &quot;NOTIFY&quot; request. In other words, a SUBSCRIBE will serve both as a subscription to event information and as an immediate fetch of current related state information.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1030753"></A>A natural consequence of the described behavior is that an immediate fetch without a persistent subscription may be effected by sending an appropriate SUBSCRIBE with an &quot;Expires&quot; of 0. Of course, an immediate fetch while a subscription is pending may be effected by sending an appropriate SUBSCRIBE with an &quot;Expires&quot; greater than 0.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1030804"></A>Note that privacy concerns may require that notifiers either use access lists or ask the user on a per-subscription basis whether a particular remote node is allowed to subscribe to a certain set of events. If such authorization fails, the notifier should reply to the request with a &quot;403 Forbidden&quot; request. See section <A HREF="draft-roach-sip-subscribe-notify-01.html#67345" CLASS="XRef">7.</A></P>
+<P CLASS="Body">
+<A NAME="pgfId-1030769"></A>The other response codes defined in RFC2543 may be used in response to SUBSCRIBE requests, as appropriate.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1031040"></A>When a notifier receives a subscription refresh, assuming that the subscriber is still authorized, the notifier updates the expiration time of each notification contact address in the subscription. As with the initial subscription, the server MAY lower the amount of time until expiration, but MUST NOT increase it. The final expiration time is placed in the Expires header in the response, or into the expires parameters of the Contact headers in the response. </P>
+<P CLASS="Body">
+<A NAME="pgfId-1031088"></A>If no refresh for a notification address is received before its expiration time, that address is removed from the list of addresses. If all notification addresses are removed, the entire subscription is deleted.</P>
+</DIV>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1030729"></A>5.2.	Description of NOTIFY Behavior</H2>
+<DIV>
+<H3 CLASS="Heading3">
+<A NAME="pgfId-1030043"></A>5.2.1.	Correlation</H3>
+<P CLASS="Body">
+<A NAME="pgfId-1030047"></A>NOTIFY requests MUST contain the same Call-ID, local URI, and remote URI as the SUBSCRIBE request which ordered them. This is the same set of criteria that define a call leg.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1031158"></A>The From field of a NOTIFY request MUST contain a tag; this allows for the subscriber to differentiate between events from different notifiers.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1031159"></A>Since forking proxies pass all 200 responses upstream, it is expected that these &quot;From&quot; fields will not contain any tags which are unknown to the subscriber. However, to make the subscription mechanism more robust, subscribers SHOULD be prepared to receive notifications with previously unknown tags in the &quot;From&quot; field.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1031162"></A>As expected, CSeq spaces are unique for each node; in other words, the notifier uses a different CSeq space than the subscriber and any other notifiers.</P>
+</DIV>
+<DIV>
+<H3 CLASS="Heading3">
+<A NAME="pgfId-1030292"></A>5.2.2.	Identification of reported events, event classes, and current state</H3>
+<P CLASS="Body">
+<A NAME="pgfId-1030293"></A>Identification of events being reported in a notification is very similar to that described for subscription to events (see section <A HREF="draft-roach-sip-subscribe-notify-01.html#28631" CLASS="XRef">5.1.3.</A>).</P>
+<P CLASS="Body">
+<A NAME="pgfId-1030294"></A>The Request URI of a NOTIFY request contains enough information to route the request to the party which is subscribed to receive notifications. It is derived from the &quot;Contact&quot; header present in the corresponding SUBSCRIBE request.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1030322"></A>If the same events for different resources are being subscribed to, impelentors are expected to use different &quot;Call Legs&quot; (To, From, Call-ID) in order to be able to differentiate between notifications for them, unless the body for the event contains enough information for this correlation. Note that this shouldn't often pose any difficulty, since the &quot;To&quot; field almost always matces the Request-URI on the originator's side.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1030295"></A>As in SUBSCRIBE requests, NOTIFY &quot;Event&quot; headers will contain a single opaque token which identifies the event or class of events for which a subscription is being requested.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1030296"></A>If the extension draft to which the event token corresponds defines behavior associated with the body of its NOTIFY requests, those semantics apply. This information is expected to provide additional details about the nature of the event which has occurred and the resultant resource state.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1031147"></A>When present, the body of the NOTIFY request MUST be formatted into one of the body formats specified in the &quot;Accept&quot; header of the corresponding SUBSCRIBE request. The formatting rules and behavior when no &quot;Accept&quot; header is expected to be defined by the document which describes the relevant event package.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1030345"></A>Note that sending a NOTIFY does not cancel the SUBSCRIBE which requested it; in other words, a single SUBSCRIBE request may trigger several NOTIFY requests.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1030503"></A>Further, NOTIFY requests MAY be sent without a matching SUBSCRIBE under certain circumstances. It may make sense, for example, to set up a subscription using an out-of-band mechanism (e.g. HTTP, static provisioning). A subscriber which is designed to operate in this fashion MUST be prepared to receive NOTIFY requests without a corresponding call leg.</P>
+</DIV>
+<DIV>
+<H3 CLASS="Heading3">
+<A NAME="pgfId-1030511"></A>5.2.3.	Notifier NOTIFY Behavior</H3>
+<P CLASS="Body">
+<A NAME="pgfId-1031125"></A>When a relevant change in the subscribed state occurs, the notifier will construct and send a NOTIFY request to the subscriber(s). Such a message should be sent in as timely a manner as is practical.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1031126"></A>If the notifier is able, through any means, to determine that the subscriber is no longer available to receive notifications, it MAY elect to not send a notification. An example of a method by which such information may be known is the &quot;SIP for Presence&quot; event set (see <A HREF="draft-roach-sip-subscribe-notify-01.html#78899" CLASS="XRef">[5]</A>).</P>
+<P CLASS="Body">
+<A NAME="pgfId-1031138"></A>If the original subscription contained a &quot;Record-Route&quot; and/or &quot;Contact&quot; headers, notifications are sent according to the rules outlined in RFC 2543 <A HREF="draft-roach-sip-subscribe-notify-01.html#53863" CLASS="XRef">[1]</A>, as if the SUBSCRIBE were an INVITE, and the NOTIFY were any subsequent message (e.g. BYE).</P>
+<P CLASS="Body">
+<A NAME="pgfId-1031165"></A>Notify requests SHOULD NOT contain a &quot;Contact&quot; header.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1031191"></A>A NOTIFY request is considered failed if the response times out, or a non-200 class response code is received which has no &quot;Retry-After&quot; header and no implied further action which can be taken to retry the request (e.g. &quot;401 Authorization Required.&quot;)</P>
+<P CLASS="Body">
+<A NAME="pgfId-1031196"></A>If the response to a NOTIFY request fails, the notifier SHOULD remove the contact from the appropriate subscription. If removal of the contact leaves no remaining contacts, the entire subscription is removed.</P>
+</DIV>
+<DIV>
+<H3 CLASS="Heading3">
+<A NAME="pgfId-1030512"></A>5.2.4.	Proxy NOTIFY Behavior</H3>
+<P CLASS="Body">
+<A NAME="pgfId-1030629"></A>Proxies need no additional behavior beyond that described in RFC 2543 <A HREF="draft-roach-sip-subscribe-notify-01.html#53863" CLASS="XRef">[1]</A> to support NOTIFY.</P>
+</DIV>
+<DIV>
+<H3 CLASS="Heading3">
+<A NAME="pgfId-1030513"></A>5.2.5.	Subscriber NOTIFY Behavior</H3>
+<P CLASS="Body">
+<A NAME="pgfId-1031176"></A>Upon receiving a NOTIFY request, the subscriber should check that it matches at least one of its outstanding subscriptions; if not, it SHOULD return a &quot;481 Call leg/transaction does not exist&quot; response. It is RECOMMENDED that it also send a SUBSCRIBE request with &quot;Expires: 0,&quot; &quot;Contact: *,&quot; and &quot;Event:&quot; copied from the NOTIFY request to cancel the subscription which triggered the errant notification.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1031223"></A>The previous paragraph notwithstanding, subscribers which are designed to receive notifications for events subscribed to by an out-of-band mechanism MUST NOT return a 481 response code for any notifications, and should instead process them as if it had previous knowledge of the subscription.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1031205"></A>To prevent spoofing of events, NOTIFY requests MAY be authenticated, using any defined SIP authentication mechanism.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1031179"></A>Once the notification is deemed acceptable to the susbcriber,, the subscriber SHOULD return a 200 response. In general, it is not expected that NOTIFY responses will contain bodies; however, they MAY, if the NOTIFY request contained an &quot;Accept&quot; header.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1031182"></A>Other responses defined in RFC 2543 <A HREF="draft-roach-sip-subscribe-notify-01.html#53863" CLASS="XRef">[1]</A> may also be returned, as appropriate.</P>
+</DIV>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1030357"></A>5.3.	Allow-Events header usage</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031110"></A>The &quot;Allow-Events&quot; header, if present, includes a list of tokens which indicate the event packages supported by the client (if sent in a request) or server (if sent in a response).</P>
+<P CLASS="Body">
+<A NAME="pgfId-1031111"></A>Any node implementing one or more event packages SHOULD include an appropriate &quot;Allow-Events&quot; header indicating all supported events in INVITE requests and responses, OPTIONS responses, and REGISTER requests. &quot;Allow-Events&quot; headers MAY be included in any other type of request or response.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1031120"></A>This information is very useful, for example, in allowing user agents to render particular interface elements appropriately according to whether the events required to implement the features they represent are supported by the appropriate nodes.</P>
+</DIV>
+</DIV>
+<DIV>
+<H1 CLASS="Heading1">
+<A NAME="pgfId-1029558"></A>6.	Open Issues</H1>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1029087"></A>6.1.	Resource identification for out-of-band subscriptions</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1030650"></A>In a SUBSCRIBE request, the request URI is used to identify the resource (although not the event) to which a subscription is requested. If there is no explicit SUBSCRIBE, this information doesn't really exist anywhere. For certain event types, this may pose a problem. This hardly seems a reason to explicitly require a SUBSCRIBE to be sent prior to any NOTIFY, though.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1030655"></A>This can be solved by adding something like a &quot;resource=URI&quot; parameter to the &quot;Event:&quot; header (or an additional header, such as &quot;Event-URI&quot;) in NOTIFY requests. This approach also lends a certain robustness to the SUBSCRIBE/NOTIFY mechanism, since any lost subscription state information can be reconstructed by the subscriber as NOTIFY requests arrive. It also allows differentiation of resources for subscriptions that share a common To, From, and Call-ID.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1031231"></A>The author would appreciate feedback on whether such a mechanism is considered appropriate and useful.</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1030651"></A>6.2.	Expiration of call-related subscriptions when the call is over</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1030538"></A>Call-related subscriptions disappear at the end of the call to which they relate. Is this an unnecessary restriction? It seems to make the implementation in the notifier simpler. Obviously, this doesn't preclude end-of-call statistics (which can be sent right at the end of the call, just as the subscription is about to disappear). Are there any realistic uses for notification of call-related events long after the call to which they relate is terminated?</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1030654"></A>6.3.	Forking behavior</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1030644"></A>Forking of a SUBSCRIBE request may have unintended consequences; however, they don't seem to normally pose any undesirable behavior. Under normal proxy processing, the SUBSCRIBE request will be cancelled for all outstanding branches once the first 200 response is received. Since many notifiers will respond to a SUBSCRIBE immediately (and proxies are required to pass all 200s, not just the first one they see), it is most likely that forked SUBSCRIBEs will cause the subscriber to receive a 200 response for every branch. The exceptions to this assumption will be, for example, notifiers that interactively ask the user for permission before accepting a subscription.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1030664"></A>The only really undesirable behavior arises from the fact that SUBSCRIBEs can be cancelled, so it is possible that not all requests will complete. So, here's the open issue: should be address this by saying that SUBSCRIBEs can't be cancelled, should we try to find another solution to this problem, or should be just let things behave the way described here?</P>
+<P CLASS="Body">
+<A NAME="pgfId-1030649"></A>Note that forking shouldn't usually cause problems for NOTIFY requests, since they will typically be sent to the URI indicated in the SUBSCRIBE request Contact: header. The Contact: header in a request is generally expected to point directly to the originator of the SUBSCRIBE request, thereby eliminating the possibility of forking it. Even if NOTIFY requests are forked, the consequences will be minimal. The 200 responses to NOTIFY requests are only included as confirmation, and aren't expected to contain useful information.</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031021"></A>6.4.	Event Agents</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031022"></A>The SIP for Presence draft (draft-rosenberg-impp-presence-00.txt) describes a mechanism by which presentities having access to registration information can accept registrations on behalf of user agents incapable of processing SUBSCRIBE requests. This is a very useful concept; however, it does not seem to be generalizable to all classes of events. Should this draft make explicit provisions for this capability, or should it remain defined in the SIP for Presence draft as behavior specific to the &quot;presence&quot; event package?</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031015"></A>6.5.	Is &quot;489 Bad Event&quot; strictly necessary?</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1030744"></A>Is a new response code really necessary, or is there an appropriate one we an re-use? No existing codes seem applicable.</P>
+</DIV>
+</DIV>
+<DIV>
+<H1 CLASS="Heading1">
+<A NAME="pgfId-1029509"></A>7.	<A NAME="67345"></A>Security Considerations</H1>
+<P CLASS="Body">
+<A NAME="pgfId-1028267"></A>The ability to accept third-party subscriptions should be under the direct control of the user, since many types of events may be considered sensitive for the purposes of privacy. Similarly, the user agent should have the ability to selectively reject subscriptions based on the calling party (using either a white-list or black-list functionality), and/or using standard SIP authentication mechanisms.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1030812"></A>The mere act of returning a &quot;403 Forbidden&quot; response code to a SUBSCRIBE request may, under certain very rare circumstances, pose privacy concerns. In these cases, the notifier may elect to return a 200 response with (possibly inaccurate) state, and never notify the subscriber of events. Note that this behavior is a rare exception, and should not be exhibited without justification.</P>
+</DIV>
+<DIV>
+<H1 CLASS="Heading1">
+<A NAME="pgfId-1031246"></A>8.	References</H1>
+<P CLASS="Reference">
+<A NAME="pgfId-1031248"></A>[1]	<A NAME="53863"></A>M. Handley/H. Schulzrinne/E. Schooler/J. Rosenberg, &quot;SIP: Session Initiation Protocol&quot;, RFC 2543, IETF; March 1999.</P>
+<P CLASS="Reference">
+<A NAME="pgfId-1031250"></A>[2]	<A NAME="26842"></A>Adam Roach, &quot;Automatic Call Back Service in SIP&quot;, Internet Draft &lt;draft-roach-sip-acb-00.txt&gt;, IETF; March 2000. Work in progress.</P>
+<P CLASS="Reference">
+<A NAME="pgfId-1031252"></A>[3]	<A NAME="42297"></A>J. Rosenberg, H. Schulzrinne, &quot;Guidelines for Authors of SIP Extensions&quot;, &lt;draft-ietf-sip-guidelines-01.txt&gt;, IETF; July 2000. Work in progress.</P>
+<P CLASS="Reference">
+<A NAME="pgfId-1031254"></A>[4]	<A NAME="33731"></A>S. Petrack, L. Conroy, &quot;The PINT Service Protocol&quot;, RFC 2848, IETF; June 2000.</P>
+<P CLASS="Reference">
+<A NAME="pgfId-1031256"></A>[5]	<A NAME="78899"></A>J. Rosenberg et. al., &quot;SIP Extensions for Presence&quot;, &lt;draft-rosenberg-impp-presence-00.txt&gt;, IETF; June 2000. Work in progress.</P>
+</DIV>
+<DIV>
+<H1 CLASS="Heading1">
+<A NAME="pgfId-1028268"></A>9.	Credits</H1>
+<P CLASS="Body">
+<A NAME="pgfId-1030850"></A>Thanks to the participants in the Events BOF at the 48th IETF meeting in Pittsburgh, as well as those who gave ideas and suggestions on the SIP Events mailing list. In particular, I wish to thank Henning Schulzrinne of Columbia University for coming up with the final three-tiered event identification scheme, Sean Olson of Ericsson for miscellaneous guidance, and the authors of the &quot;SIP Extensions for Presence&quot; draft for their input to SUBSCRIBE and NOTIFY request semantics.</P>
+</DIV>
+<DIV>
+<H1 CLASS="Heading1">
+<A NAME="pgfId-1030849"></A>10.	Author's Address</H1>
+<P CLASS="Body">
+<A NAME="pgfId-1028269"></A><A HREF="draft-roach-sip-subscribe-notify-01.html#88493" CLASS="XRef">Adam Roach</A><BR>
+<A HREF="draft-roach-sip-subscribe-notify-01.html#71684" CLASS="XRef">Ericsson Inc.</A><BR>
+Mailstop L-04<BR>
+851 International Pkwy.<BR>
+Richardson, TX 75081<BR>
+USA<BR>
+Phone: +1 972 583 7594<BR>
+Fax: +1 972 669 0154<BR>
+E-Mail: adam.roach@ericsson.com</P>
+</DIV>
+<TABLE NAME="Footer" WIDTH=100%><TR><TD>Roach</TD><TD ALIGN=RIGHT>[Page 17]</TD></TR></TABLE>
+</BODY>
+</HTML>

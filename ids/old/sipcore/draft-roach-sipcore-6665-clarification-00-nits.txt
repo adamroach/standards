@@ -1,0 +1,41 @@
+idnits 2.12.17 
+
+sipcore/draft-roach-sipcore-6665-clarification-00.txt:
+
+  Checking boilerplate required by RFC 5378 and the IETF Trust (see
+  http://trustee.ietf.org/license-info):
+  ----------------------------------------------------------------------------
+
+     No issues found here.
+
+  Checking nits according to http://www.ietf.org/id-info/1id-guidelines.txt:
+  ----------------------------------------------------------------------------
+
+     No issues found here.
+
+  Checking nits according to http://www.ietf.org/id-info/checklist :
+  ----------------------------------------------------------------------------
+
+  ** The document seems to lack an Introduction section.
+
+
+  Miscellaneous warnings:
+  ----------------------------------------------------------------------------
+
+  == The copyright year in the IETF Trust and authors Copyright Line does not
+     match the current year
+
+  -- The document date (October 27, 2014) is 1068 days in the past.  Is this
+     intentional?
+
+
+  Checking references for intended status: Proposed Standard
+  ----------------------------------------------------------------------------
+
+     (See RFCs 3967 and 4897 for information about using normative references
+     to lower-maturity documents in RFCs)
+
+     No issues found here.
+
+     Summary: 1 error (**), 0 flaws (~~), 1 warning (==), 1 comment (--).
+

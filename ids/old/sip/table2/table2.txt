@@ -1,0 +1,143 @@
+Header Field                  Where   Proxy ACK BYE CAN INF INV MES NOT OPT PRA PUB REF REG SUB UPD
+----------------------------- ------- ----- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+Accept                        2xx            -   -   -   -   o   -   -   m*  -   -   -   o   -   o 
+Accept                        415            -   c   -   o   c   m*  o   c   c   m*  c   c   o   c 
+Accept                        R              -   o   -   o   o   -   o   m*  o   o   o   o   o   o 
+Accept-Contact                R       ar     o   o   o   o   o   o   o   o   o   o   o   -   o   o 
+Accept-Encoding               2xx            -   -   -   o   o   -   -   m*  -   -   -   o   -   o 
+Accept-Encoding               415            -   c   -   c   c   m*  o   c   c   m*  c   c   o   c 
+Accept-Encoding               R              -   o   -   o   o   -   o   o   o   o   o   o   o   o 
+Accept-Language               2xx            -   -   -   o   o   -   -   m*  -   -   -   o   -   o 
+Accept-Language               415            -   c   -   o   c   m*  o   c   c   m*  c   c   o   c 
+Accept-Language               R              -   o   -   o   o   -   o   o   o   o   o   o   o   o 
+Accept-Resource-Priority      200     amdr   -   o   o   o   o   o   o   o   o   o   o   o   o   o 
+Accept-Resource-Priority      417     amdr   -   o   o   o   o   o   o   o   o   o   o   o   o   o 
+Alert-Info                    180     ar     -   -   -   -   o   -   -   -   -   -   -   -   -   - 
+Alert-Info                    R       ar     -   -   -   -   o   -   -   -   -   -   -   -   -   - 
+Allow                                        -   o   -   o   o   o   o   o   o   o   o   o   o   o 
+Allow                         2xx            -   o   -   o   m*  o   o   m*  o   o   o   o   o   o 
+Allow                         405            -   m   -  o/m  m   m   m   m   m   m   m   m   m   m 
+Allow-Events                  2xx            -   o   -   o   o   o   o   o   o   o   o   o   o   o 
+Allow-Events                  489            -   -   -   -   -   -   m   -   -   m   -   -   m   - 
+Allow-Events                  R              o   o   -   o   o   o   o   o   o   o   o   o   o   o 
+Answer-Mode                   2xx     amdr   -   -   -   -   o   -   -   -   -   -   -   -   -   - 
+Answer-Mode                   R       amdr   -   -   -   -   o   -   -   -   -   -   -   -   -   - 
+Authentication-Info           2xx            -   o   -   o   o   o   o   o   o   o   o   o   o   o 
+Authorization                 R              o   o   o   o   o   o   o   o   o   o   o   o   o   o 
+Call-ID                       c       r      m   m   m   m   m   m   m   m   m   m   m   m   m   m 
+Call-Info                             ar     -   -   -   o   o   o   o   o   -   o   -   o   o   o 
+Contact                       1xx            -   -   -   -   o   -   o   -   -   -   -   -   o   o 
+Contact                       2xx            -   -   -   -   m   -   o   o   -   -   m   o   m   m 
+Contact                       3xx     d      -   o   -   -   o   o   m   o   o   o   o   o   m   o 
+Contact                       485            -   o   -   -   o   o   o   o   o   o   o   o   o   o 
+Contact                       R              o   -   -  o/-  m   -   m   o   -   -   m   o   m   m 
+Content-Disposition                          o   o   -   o   o   o   o   o   o   o   o   o   o   o 
+Content-Encoding                             o   o   -   o   o   o   o   o   o   o   o   o   o   o 
+Content-Language                             o   o   -   o   o   o   o   o   o   o   o   o   o   o 
+Content-Length                        ar     t   t   t   o   t   t   t   t   t   t   t   t   t   t 
+Content-Type                                 *   *   -   *   *   *   *   *   *   *   *   *   *   * 
+CSeq                          c       r      m   m   m   m   m   m   m   m   m   m   m   m   m   m 
+Date                                  a      o   o   o   o   o   o   o   o   o   o   o   o   o   o 
+Error-Info                    300-699 a      -   o   o   o   o   o   o   o   o   o   o   o   o   o 
+Event                         R              -   -   -   -   -   -   m   -   -   m   -   -   m   - 
+Expires                       2xx            -   -   -   -   o   o   -   -   -   o   -   o   m   - 
+Expires                       R              -   -   -  o/-  o   o   -   -   -   o   o   o   o   - 
+Expires                       r              -   -   -  o/-  o   o   -   -   -   o   -   o   o   - 
+Flow-Timer                    2xx     a      -   -   -   -   -   -   -   -   -   -   -   o   -   - 
+From                          c       r      m   m   m   m   m   m   m   m   m   m   m   m   m   m 
+History-Info                          amdr   -   -   -   -   o   o   o   o   -   o   o   o   o   - 
+Identity                      R       a      o   o   -   o   o   o   o   o   o   o   o   o   o   o 
+Identity-Info                 R       a      o   o   -   o   o   o   o   o   o   o   o   o   o   o 
+In-Reply-To                   R              -   -   -   -   o   o   -   -   -   -   -   -   -   - 
+Join                          R              -   -   -   -   o   -   -   -   -   -   -   -   -   - 
+Max-Breadth                   R       amr    m*  m*  -   m*  m*  m*  m*  m*  m*  m*  m*  m*  m*  m*
+Max-Forwards                  R       amr    m   m   m   o   m   m   m   m   m   m   m   m   m   m 
+MIME-Version                                 o   o   -   o   o   o   o   o   o   o   o   o   o   o 
+Min-Expires                   423            -   -   -   -   -   -   -   -   -   m   -   m   m   - 
+Min-SE                        422            -   -   -   -   m   -   -   -   -   -   -   -   -   m 
+Min-SE                        R       amr    -   -   -   -   o   -   -   -   -   -   -   -   -   o 
+Organization                          ar     -   -   -  o/-  o   o   -   o   -   o   o   o   o   o 
+P-Access-Network-Info                 dr     -   o   -   o   o   o   o   o   o   o   o   o   o   o 
+P-Answer-State                18x     ar     -   -   -   -   o   -   -   -   -   -   -   -   -   - 
+P-Answer-State                2xx     ar     -   -   -   -   o   -   -   -   -   -   -   -   -   - 
+P-Asserted-Identity                   adr    -   o   -   -   o   o   o   o   -   o   o   -   o   - 
+P-Associated-URI              2xx            -   -   -   -   -   -   -   -   -   -   -   o   -   - 
+P-Called-Party-ID             R       amr    -   -   -   -   o   o   -   o   -   o   o   -   o   - 
+P-Charging-Function-Addresses         adr    -   o   -   o   o   o   o   o   o   o   o   o   o   o 
+P-Charging-Vector                     admr   -   o   -   o   o   o   o   o   o   o   o   o   o   o 
+P-DCS-Trace-Party-ID          R       dmr    -   -   -   -   o   -   -   -   -   -   -   -   -   - 
+P-DCS-OSPS                    R       dr     -   -   -   -   o   -   -   -   -   -   -   -   -   o 
+P-DCS-Billing-Info                    admr   -   -   -   -   o   -   -   -   -   -   -   -   -   - 
+P-DCS-LAES                            adr    -   -   -   -   o   -   -   -   -   -   -   -   -   - 
+P-DCS-Redirect                        adr    -   -   -   -   o   -   -   -   -   -   -   -   -   - 
+P-Early-Media                 18x     amr    -   -   -   -   o   -   -   -   -   -   -   -   -   - 
+P-Early-Media                 2xx     amr    -   -   -   -   -   -   -   -   o   -   -   -   -   o 
+P-Early-Media                 R       amr    -   -   -   -   o   -   -   -   o   -   -   -   -   o 
+P-Media-Authorization         101-199 ad     -   -   -   -   o   -   -   -   -   -   -   -   -   - 
+P-Media-Authorization         2xx     ad     -   -   -   -   o   -   -   -   o   -   -   -   -   o 
+P-Media-Authorization         R       ad     o   -   -   -   o   -   -   -   o   -   -   -   -   o 
+P-Preferred-Identity                  adr    -   o   -   -   o   o   o   o   -   o   o   -   o   - 
+P-Profile-Key                 R       admr   o   o   -   o   o   o   o   o   o   o   o   o   o   o 
+P-Refused-URI-List            403            -   o   -   o   o   o   o   o   o   o   o   o   o   o 
+P-Served-User                 R       amdr   -   -   -   -   o   o   -   o   -   o   o   -   o   - 
+P-User-Database               R       admr   -   -   -   -   o   o   -   o   -   o   o   o   o   - 
+P-Visited-Network-ID          R       ad     -   -   -   -   o   o   -   o   -   o   o   o   o   - 
+Path                          2xx     -      -   -   -   -   -   -   -   -   -   -   -   o   -   - 
+Path                          R       ar     -   -   -   -   -   -   -   -   -   -   -   o   -   - 
+Permission-Missing            470            -   o   -   o   o   o   o   o   o   o   o   o   o   o 
+Priority                      R       ar     -   -   -  o/-  o   o   -   -   -   o   -   -   o   - 
+Priv-Answer-Mode              2xx     amdr   -   -   -   -   o   -   -   -   -   -   -   -   -   - 
+Priv-Answer-Mode              R       amdr   -   -   -   -   o   -   -   -   -   -   -   -   -   - 
+Privacy                               amrd   o   o   o   o   o   o   o   o   o   o   o   o   o   o 
+Proxy-Authenticate            401     ar     -   o   o   o   o   o   o   o   o   o   o   o   o   o 
+Proxy-Authenticate            407     ar     -   m   -  o/m  m   m   m   m   m   m   m   m   m   m 
+Proxy-Authorization           R       dr     o   o   -   o   o   o   o   o   o   o   o   o   o   o 
+RAck                          R              -   -   -   -   -   -   -   -   m   -   -   -   -   - 
+Reason                        R              -   o   o   o   o   o   o   o   o   o   o   o   o   o 
+Record-Route                  18x     mr     -   -   -   -   o   -   -   -   -   -   -   -   -   - 
+Record-Route                  2xx     mr     -   o   o   o   o   o   o   o   o   -   o   -   o   o 
+Record-Route                  R       ar     o   o   o   o   o   -   o   o   o   -   o   -   o   o 
+Refer-Sub                     2xx            -   -   -   -   -   -   -   -   -   -   o   -   -   - 
+Refer-Sub                     R              -   -   -   -   -   -   -   -   -   -   o   -   -   - 
+Referred-By                   R              -   o   -   o   o   o   -   o   -   o   o   o   o   o 
+Reject-Contact                R       ar     o   o   o   o   o   o   o   o   o   o   o   -   o   o 
+Replaces                      R              -   -   -   -   o   -   -   -   -   -   -   -   -   - 
+Reply-To                                     -   -   -   -   o   o   -   -   -   -   -   -   -   - 
+Request-Disposition           R       ar     o   o   o   o   o   o   o   o   o   o   o   o   o   o 
+Require                               ar     -   c   -   o   c   c   o   c   c   o   c   c   o   c 
+Resource-Priority             R       amdr   o   o   o   o   o   o   o   o   o   o   o   o   o   o 
+Retry-After                   404            -   o   o   o   o   o   o   o   o   o   o   o   o   o 
+Retry-After                   413            -   o   o   o   o   o   o   o   o   o   o   o   o   o 
+Retry-After                   480            -   o   o   o   o   o   o   o   o   o   o   o   o   o 
+Retry-After                   486            -   o   o   o   o   o   o   o   o   o   o   o   o   o 
+Retry-After                   500            -   o   o   o   o   o   o   o   o   o   o   o   o   o 
+Retry-After                   503            -   o   o   o   o   o   o   o   o   o   o   o   o   o 
+Retry-After                   600            -   o   o   o   o   o   o   o   o   o   o   o   o   o 
+Retry-After                   603            -   o   o   o   o   o   o   o   o   o   o   o   o   o 
+Route                         R       adr    c   c   c   o   c   o   c   c   c   c   c   c   c   c 
+RSeq                          1xx            -   -   -   -   o   -   -   -   -   -   -   -   -   - 
+Security-Client               R       ard    -   o   -   o   o   o   o   o   o   o   o   o   o   o 
+Security-Server               421            -   o   -   o   o   o   o   o   o   o   o   o   o   o 
+Security-Server               494            -   o   -   o   o   o   o   o   o   o   o   o   o   o 
+Security-Verify               R       ard    -   o   -   o   o   o   o   o   o   o   o   o   o   o 
+Server                        r              -   o   o   o   o   o   o   o   o   o   o   o   o   o 
+Service-Route                 2xx     ar     -   -   -   -   -   -   -   -   -   -   -   o   -   - 
+Session-Expires               2xx     ar     -   -   -   -   o   -   -   -   -   -   -   -   -   o 
+Session-Expires               R       amr    -   -   -   -   o   -   -   -   -   -   -   -   -   o 
+SIP-ETag                      2xx            -   -   -   -   -   -   -   -   -   m   -   -   -   - 
+SIP-If-Match                  R              -   -   -   -   -   -   -   -   -   o   -   -   -   - 
+Subject                       R              -   -   -   o   o   o   -   -   -   o   -   -   -   - 
+Subscription-State            R              -   -   -   -   -   -   m   -   -   -   -   -   -   - 
+Supported                     2xx            -   o   o   o   m*  o   o   m*  o   o   o   o   o   o 
+Supported                     R              -   o   o   o   m*  o   o   o   o   o   o   o   o   o 
+Target-Dialog                 R       -      -   -   -   -   o   -   -   -   -   -   o   -   o   - 
+Timestamp                                    o   o   o   o   o   o   o   o   o   o   o   o   o   o 
+To                            c       r      m   m   m   m   m   m   m   m   m   m   m   m   m   m 
+Trigger-Consent               R              -   o   -   o   o   o   o   o   o   o   o   o   o   o 
+Unsupported                   420            -   m   -   o   m   o   o   m   m   o   o   m   o   m 
+User-Agent                                   o   o   o   o   o   o   o   o   o   o   o   o   o   o 
+Via                           R       amr    m   m   m   m   m   m   m   m   m   m   m   m   m   m 
+Via                           rc      dr     m   m   m   m   m   m   m   m   m   m   m   m   m   m 
+Warning                       r              -   o   o   o   o   o   o   o   o   o   o   o   o   o 
+WWW-Authenticate              401     ar     -   m   -  o/m  m   m   m   m   m   m   m   m   m   m 
+WWW-Authenticate              407     ar     -   o   -   o   o   o   o   o   o   o   o   o   o   o 

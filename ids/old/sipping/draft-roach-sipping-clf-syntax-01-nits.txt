@@ -1,0 +1,69 @@
+idnits 2.12.17 
+
+sipping/draft-roach-sipping-clf-syntax-01.txt:
+
+  Checking boilerplate required by RFC 5378 and the IETF Trust (see
+  http://trustee.ietf.org/license-info):
+  ----------------------------------------------------------------------------
+
+     No issues found here.
+
+  Checking nits according to http://www.ietf.org/id-info/1id-guidelines.txt:
+  ----------------------------------------------------------------------------
+
+  ** Expected the document's filename to be given on the first page, but didn't
+     find any
+
+  == No 'Intended status' indicated for this document; assuming Proposed
+     Standard
+
+
+  Checking nits according to http://www.ietf.org/id-info/checklist :
+  ----------------------------------------------------------------------------
+
+  ** The document seems to lack a Security Considerations section.
+
+  ** The document seems to lack an IANA Considerations section.  (See Section
+     2.2 of http://www.ietf.org/id-info/checklist for how to handle the case
+     when there are no actions for IANA.)
+
+  ** The document seems to lack a both a reference to RFC 2119 and the
+     recommended RFC 2119 boilerplate, even if it appears to use RFC 2119
+     keywords. 
+
+     RFC 2119, paragraph 2:
+        The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+        "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in
+        this document are to be interpreted as described in RFC 2119.
+
+     RFC 2119 keyword, line 229: '... Implementations MAY reuse the server ...'
+     RFC 2119 keyword, line 231: '...cookie), or they MAY generate a unique...'
+
+  Miscellaneous warnings:
+  ----------------------------------------------------------------------------
+
+  == The copyright year in the IETF Trust and authors Copyright Line does not
+     match the current year
+
+  == Couldn't figure out when the document was first submitted -- there may
+     comments or warnings related to the use of a disclaimer for pre-RFC5378
+     work that could not be issued because of this.  Please check the Legal
+     Provisions document at http://trustee.ietf.org/license-info to determine if
+     you need the pre-RFC5378 disclaimer.
+
+  -- The document date (May 2009) is 2906 days in the past.  Is this
+     intentional?
+
+
+  Checking references for intended status: Proposed Standard
+  ----------------------------------------------------------------------------
+
+     (See RFCs 3967 and 4897 for information about using normative references
+     to lower-maturity documents in RFCs)
+
+  ** Downref: Normative reference to an Informational draft:
+     draft-gurbani-sipping-clf (ref. 'I-D.gurbani-sipping-clf')
+
+
+     Summary: 5 errors (**), 0 flaws (~~), 3 warnings (==), 1 comment (--).
+

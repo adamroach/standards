@@ -1,0 +1,393 @@
+#!/usr/bin/perl
+
+use HTML::TreeBuilder;
+
+$file = shift;
+
+$TOCLevel = 3;
+
+$html = "${file}.html";
+$css = "${file}.css";
+$txt = "${file}.txt";
+$tmp = "/tmp/$$.html";
+
+open (CSS, $css) || die "Cannot read $css";
+
+# Create a temporary copy of the HTML file to force spaces
+# to be formatted correctly for "<PRE>" flows.
+open (TMP, ">$tmp") || die "Cannot write to temp file $tmp";
+open (HTML, $html) || die "Cannor read $html for reading";
+while (<HTML>)
+{
+  s/ ( +)/&nbsp;$1/g;
+  s/<A HREF="[^>]*>([^<]*)<\/A>/$1/g;
+  print TMP $_;
+}
+close (TMP);
+close (HTML);
+
+# Read in CSS
+$CSS = join ('', <CSS>);
+close (CSS);
+$CSS =~ s/[\n \t]+//gos;
+@Elements = split('}', $CSS);
+foreach $Element (@Elements)
+{
+  ($Names, $Attribs) = split('{', $Element);
+  @Names = split(',',$Names);
+  @Attribs = split(';',$Attribs);
+  foreach $Attrib (@Attribs)
+  {
+    ($AttName, $AttVal) = split(':',$Attrib);
+    foreach $Name (@Names)
+    {
+      ($Tag, $Class) = split('\.',$Name);
+      $Tag =~ y/A-Z/a-z/;
+      $Attrib{$Tag}{$Class}{$AttName} = $AttVal;
+    }
+  }
+}
+
+# Parse HTML
+$Tree = new HTML::TreeBuilder;
+$Tree->warn(1);
+$Tree->parse_file($tmp);
+unlink ($tmp);
+@stack = ();
+&InitText;
+
+$Tree->traverse(\&BuildTOC);
+$Tree->traverse(\&CallBack);
+
+$Text .= "\n" x ($Bottom - $Line - 3);
+&Footer;
+
+# Final pass for table of contents
+$Text =~ s/\002\[([^\]]*)\]/$TOC{$1}{page}/gmeo;
+
+# Attempt to rectify strange space-after-reference problem.
+$Text =~ s/\] ([\.\)\,])/]$1/gmo;
+
+open (TXT, ">$txt") || die "Cannot open $txt for writing";
+print TXT $Text;
+close (TXT);
+
+###########################################################################
+
+sub CallBack
+{
+  my ($element, $startflag, $depth) = @_;
+  my ($i);
+  my ($format);
+
+  if (ref($element) eq 'HTML::Element')
+  {
+    if ($element->tag eq 'table' && $element->attr('name') eq 'Header')
+    {
+      $element->traverse(\&StoreHeader);
+    }
+    return 0 if ($element->is_inside('table'));
+    if ($startflag)
+    {
+      @stack[$depth-1] = $element;
+      splice(@stack,$depth);
+      if ($element->tag eq 'br') {&NewLine;}
+      elsif ($element->tag eq 'meta')
+      {
+        if($element->attr('name'))
+        {
+          $Meta{$element->attr('name')} = $element->attr('content');
+        }
+        else
+        {
+          $Meta{$element->attr('content')} = $element->attr('value');
+        }
+      }
+    }
+    else
+    {
+      if ($Attrib{$stack[$depth-1]->tag}{$stack[$depth-1]->attr('class')}) 
+      {
+        # Flush the current style.
+        &FlushText;
+      }
+    }
+  }
+  elsif (!ref($element))
+  {
+    next unless (@stack);
+    $element =~ s/^[\n\t ]*//ios;
+    $element =~ s/\xa0/ /gios;
+
+    next if ($stack[$#stack]->is_inside('table'));
+    next unless ($stack[$#stack]->is_inside('body'));
+    next unless ($element);
+      
+    $i = $#stack;
+    $i-- while (!$Attrib{$stack[$i]->tag}{($stack[$i]->attr('class'))} 
+                && $i >= 0);
+    if ($i < 0) {return 0;}
+    $format = $Attrib{$stack[$i]->tag}{($stack[$i]->attr('class'))};
+    &FormatText($element,$format,$stack[$#stack]);
+  }
+  return 1;
+}
+
+sub InitText
+{
+  undef ($Format);
+  $Buffer = "";
+  $Text = "";
+  $Right = 72;
+  $Bottom = 58;
+  $Line = 0;
+  $Col = 0;
+  $FirstLine = 1;
+  $Page = 1;
+}
+
+sub FormatText
+{
+  my ($text, $format, $parent) = @_;
+  my ($section);
+
+  if ($Format && $format != $Format)
+  {
+    &FlushText;
+    $Format = $format;
+  }
+
+  if ($Line == 0)
+  {
+    # Add first Page Header
+    &FullHeader;
+  }
+
+  if (($parent->is_inside('h1') ||
+       $parent->is_inside('h2') ||
+       $parent->is_inside('h3') ) && $text =~ /^ *([0-9\.]+)/ )
+  {
+    if ($TOC{$1})
+    {
+      $TOC{$1}{page} = $Page;
+    }
+  }
+
+  if ($parent->is_inside('pre'))
+  {
+    my (@lines) = split (/[\n]/,$text);
+    # If the preformatted text is smaller than a page, make sure it doesn't
+    # split across page boundries.
+    while ((@lines + 8 < $Bottom) && (@lines + $Line + 4 >= $Bottom)) {&NewLine}
+    while (@lines)
+    {
+      &Indent($format);
+      $Buffer .= shift (@lines);
+      &NewLine;
+    }
+  }
+  else
+  {
+    &Indent($format);
+    my (@words) = split (/[\n\t ]/,$text);
+    while (@words)
+    {
+      while (@words && ($Col + length($words[0]) + 1) < $Right)
+      {
+        $Col += length($words[0])+1;
+        $Buffer .= shift(@words)." "
+      }
+      if (@words)
+      {
+        &NewLine;
+        &Indent($format);
+      }
+    }
+  }
+
+  # If we just hit the table of contents header, insert
+  # the table of contents (sans page numbers)
+  if ($parent->is_inside('h1') && $text =~ /table of contents/i)
+  {
+    &NewLine; &NewLine;
+    foreach $section (@TOC)
+    {
+      &Indent($format);
+      $Buffer .= sprintf("    %-8.8s %-55.55s %s",
+                          $section, 
+                          $TOC{$section}{name}.("." x 62), 
+                          "\002[$section]");
+    &NewLine;
+    }
+  }
+
+#  $Buffer =~ s/ $//gos;
+}
+
+sub Indent
+{
+  my ($format) = shift;
+  my ($left, $firstleft);
+  my ($align) = $format->{'text-align'};
+  my (@words) = split (/[\n\t ]+/,$text);
+
+  if ($align eq 'center')
+  {
+    $Buffer = "\001";
+    return;
+  }
+
+  $left = $format->{'margin-left'};
+  $left =~ s/[^0-9\.]*//gio;
+
+  $firstleft = $format->{'text-indent'};
+  $firstleft =~ s/[^-0-9\.]*//gio;
+  $firstleft += $left;
+
+  $left = int($left/10 + .5);
+  $firstleft = int($firstleft/10 + .5);
+
+  if ($FirstLine)
+  {
+    $FirstLine = 0;
+    $left = $firstleft;
+  }
+
+  if ($Col == 0)
+  {
+    $Buffer = (' ' x $left);
+    $Col = $left;
+  }
+}
+
+sub FlushText
+{
+  $FirstLine = 1;
+  &NewLine;
+  &NewLine;
+  undef($Format);
+}
+
+sub NewLine
+{
+  $Buffer =~ s/ *$//gos;
+  if ($Buffer =~ s/^\001//o)
+  {
+    $Text .= &Center($Buffer, $Right);
+  }
+  else
+  {
+    $Text .= $Buffer;
+  }
+  $Buffer = "";
+  $Text .= "\n";
+  $Col = 0;
+  $Line++;
+  if ($Line + 4 >= $Bottom)
+  {
+    &NewPage;
+  }
+}
+
+sub NewPage
+{
+  &Footer;
+  $Text .= "\n";
+  &Header;
+  $Line = 4;
+}
+
+sub Footer
+{
+  $Text .= sprintf("\n\n\n%-61.61s %10.10s\n",$Meta{'Last Name'}, 
+                   "[Page ".$Page++."]");
+}
+
+sub Header
+{
+  $Text .= sprintf("%-15.15s %-40.40s %15.15s\n\n\n",
+                   $Meta{'RFC'}, &Center($Meta{'Title'},40), $Meta{'Date'});
+}
+
+sub FullHeader
+{
+  my ($i);
+  while ($Headers[0][$i] || $Headers[1][$i])
+  {
+    $Headers[1][$i] =~ s/\.fm.*?\>$/.txt>/o;
+
+    $tmp = sprintf("%72.72s", $Headers[1][$i]);
+    substr($tmp,0,length($Headers[0][$i])) = $Headers[0][$i];
+    $Text .= "$tmp\n";
+
+    $i++;
+    $Line++;
+  }
+  $Text .= "\n\n";
+  $Line +=2;
+}
+
+sub StoreHeader
+{
+  my ($element, $start) = @_;
+  if (ref($element) eq 'HTML::Element' && !$start && $element->tag eq 'td')
+  {
+    $Cell++;
+  }
+  elsif (!ref($element))
+  {
+    $element =~ s/^[\n\t ]*//g;
+    return 1 if (!$element);
+    push(@{$Headers[$Cell]},$element);
+  }
+  return 1;
+}
+
+sub Center
+{
+  my($string, $width) = @_;
+  $width = int(($width - length ($string))/2);
+  (' ' x $width).$string;
+}
+
+sub BuildTOC{
+  my ($element, $startflag, $depth) = @_;
+  my ($entry);
+  my ($section, $name);
+
+  return 1 if (!$startflag);
+
+
+  if (ref($element) eq 'HTML::Element')
+  {
+    if ($element->tag eq 'h1' ||
+       ($element->tag eq 'h2' && $TOCLevel >= 2) ||
+       ($element->tag eq 'h3' && $TOCLevel >= 3) )
+    {
+      @Entry = ();
+      $element->traverse(\&PushTOCEntry);
+      $entry = join (' ',@Entry);
+      ($section, $name) = ($entry =~ /^ *([0-9\.]*) *(.*?) *$/ );
+      if ($section)
+      {
+        print "[$section] $name\n";
+        $TOC{$section} = {'name' => $name};
+        # Keep the sections in order.
+        push (@TOC, $section);
+      }
+    }
+  }
+  return 1;
+}
+
+sub PushTOCEntry
+{
+  my ($element, $start) = @_;
+  if (!ref($element))
+  {
+    $element =~ s/^[\n\t ]*//g;
+    return 1 if (!$element);
+    push(@Entry,$element);
+  }
+  return 1;
+}

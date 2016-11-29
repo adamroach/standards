@@ -1,0 +1,58 @@
+idnits 2.12.17 
+
+martini/draft-roach-martini-gin-02.txt:
+
+  Checking boilerplate required by RFC 5378 and the IETF Trust (see
+  http://trustee.ietf.org/license-info):
+  ----------------------------------------------------------------------------
+
+     No issues found here.
+
+  Checking nits according to http://www.ietf.org/id-info/1id-guidelines.txt:
+  ----------------------------------------------------------------------------
+
+     No issues found here.
+
+  Checking nits according to http://www.ietf.org/id-info/checklist :
+  ----------------------------------------------------------------------------
+
+     No issues found here.
+
+  Miscellaneous warnings:
+  ----------------------------------------------------------------------------
+
+  == The copyright year in the IETF Trust and authors Copyright Line does not
+     match the current year
+
+  == The document seems to lack the recommended RFC 2119 boilerplate, even if
+     it appears to use RFC 2119 keywords -- however, there's a paragraph with a
+     matching beginning. Boilerplate error?
+
+     RFC 2119, paragraph 2:
+        The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+        "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in
+        this document are to be interpreted as described in RFC 2119.     
+
+     ... text found in draft:
+        The key words "MUST", "MUST NOT", "REQUIRED", "SHALL","SHALL NOT",
+..............................................................^
+        "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in
+        this document are to be interpreted as described in RFC 2119 [1].
+
+
+     (The document does seem to have the reference to RFC 2119 which the
+     ID-Checklist requires).
+  -- The document date (March 24, 2010) is 2532 days in the past.  Is this
+     intentional?
+
+
+  Checking references for intended status: Proposed Standard
+  ----------------------------------------------------------------------------
+
+     (See RFCs 3967 and 4897 for information about using normative references
+     to lower-maturity documents in RFCs)
+
+  == Outdated reference: draft-ietf-martini-reqs has been published as RFC 5947
+
+
+     Summary: 0 errors (**), 0 flaws (~~), 3 warnings (==), 1 comment (--).

@@ -1,0 +1,52 @@
+idnits 2.12.17 
+
+martini/draft-roach-martini-gin-00.txt:
+
+  Checking boilerplate required by RFC 5378 and the IETF Trust (see
+  http://trustee.ietf.org/license-info):
+  ----------------------------------------------------------------------------
+
+     No issues found here.
+
+  Checking nits according to http://www.ietf.org/id-info/1id-guidelines.txt:
+  ----------------------------------------------------------------------------
+
+     No issues found here.
+
+  Checking nits according to http://www.ietf.org/id-info/checklist :
+  ----------------------------------------------------------------------------
+
+  ** The document seems to lack a Security Considerations section.
+
+  ** The document seems to lack a both a reference to RFC 2119 and the
+     recommended RFC 2119 boilerplate, even if it appears to use RFC 2119
+     keywords. 
+
+     RFC 2119, paragraph 2:
+        The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+        "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in
+        this document are to be interpreted as described in RFC 2119.
+
+     RFC 2119 keyword, line 231: '...REGISTER message MUST be copied to the...'
+     RFC 2119 keyword, line 385: '...   MUST proxy that SUBSCRIBE to the PB...'
+
+  Miscellaneous warnings:
+  ----------------------------------------------------------------------------
+
+  == The copyright year in the IETF Trust and authors Copyright Line does not
+     match the current year
+
+  -- The document date (February 2, 2010) is 2554 days in the past.  Is this
+     intentional?
+
+
+  Checking references for intended status: Proposed Standard
+  ----------------------------------------------------------------------------
+
+     (See RFCs 3967 and 4897 for information about using normative references
+     to lower-maturity documents in RFCs)
+
+     No issues found here.
+
+     Summary: 2 errors (**), 0 flaws (~~), 1 warning (==), 1 comment (--).
+

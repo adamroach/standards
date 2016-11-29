@@ -1,0 +1,224 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN"><HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+<META NAME="GENERATOR" CONTENT="Adobe FrameMaker 5.5/HTML Export Filter">
+<LINK REL="STYLESHEET" HREF="draft-roach-mmusic-sip-pstn-require-header-00.css" CHARSET="ISO-8859-1" TYPE="text/css">
+<TITLE>SIP PSTN Interworking Umbrella &quot;Require:&quot; Header</TITLE>
+<META NAME="RFC" CONTENT="Internet Draft">
+<META NAME="Title" CONTENT="SIP PSTN Interworking Umbrella "Require:" Header">
+<META NAME="Date" CONTENT="June 1999">
+<META NAME="Last Name" CONTENT="Roach">
+
+</HEAD>
+<BODY BGCOLOR="#ffffff">
+<DIV>
+<TABLE NAME="Header" WIDTH=100%><TR><TD>Internet Engineering Task Force<BR>Internet Draft<BR>Category: Standards Track</TD><TD ALIGN=RIGHT>Adam Roach<BR>Ericsson Inc.<BR>June 1999<BR>Expires January 2000<BR>&lt;draft-roach-mmusic-sip-pstn-require-header-00.fm55&gt;</TD></TR></TABLE>
+</DIV>
+<DIV>
+<H1 CLASS="Title">
+<A NAME="pgfId-1029006"></A><A NAME="21178"></A>SIP PSTN Interworking Umbrella &quot;Require:&quot; Header</H1>
+</DIV>
+<DIV>
+<H1 CLASS="Heading0">
+<A NAME="pgfId-1029007"></A>Status of this Memo</H1>
+<P CLASS="Body">
+<A NAME="pgfId-1028188"></A>This document is an Internet-Draft and is in full conformance with all provisions of Section 10 of RFC 2026.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1028191"></A>Internet-Drafts are working documents of the Internet Engineering Task Force (IETF), its areas, and its working groups. Note that other groups may also distribute working documents as Internet-Drafts.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1028195"></A>Internet-Drafts are draft documents valid for a maximum of six months and may be updated, replaced, or obsoleted by other documents at any time. It is inappropriate to use Internet-Drafts as reference material or to cite them other than as &quot;work in progress.&quot;</P>
+<P CLASS="Body">
+<A NAME="pgfId-1028200"></A>To view the entire list of current Internet-Drafts, please check the &quot;1id-abstracts.txt&quot; listing contained in the Internet-Drafts Shadow Directories on ftp.is.co.za (Africa), ftp.nordu.net (Northern Europe), ftp.nis.garr.it (Southern Europe), munnari.oz.au (Pacific Rim), ftp.ietf.org (US East Coast), or ftp.isi.edu (US West Coast).</P>
+</DIV>
+<DIV>
+<H1 CLASS="Heading0">
+<A NAME="pgfId-998448"></A>Abstract</H1>
+<P CLASS="Body">
+<A NAME="pgfId-1015693"></A>This document outlines a new value for the SIP &quot;Require:&quot; header which denotes compliance with a number of mechanisms necessary to interwork smoothly with existing telephony networks.</P>
+</DIV>
+<DIV>
+<H1 CLASS="Heading1">
+<A NAME="pgfId-998278"></A>1.	Introduction</H1>
+<P CLASS="Body">
+<A NAME="pgfId-1029080"></A>There have been a number of extensions to the SIP protocol (<A HREF="draft-roach-mmusic-sip-pstn-require-header-00.html#54324" CLASS="XRef">ref [1]</A>) proposed to provide smooth interoperation between SIP and the PSTN network. Most of these are negotiated by means of &quot;Require:&quot; and &quot;Proxy-Require:&quot; headers.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029377"></A>It has not yet been made clear which of these extensions are expected to be supported by nodes which need to interoperate with the PSTN.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029376"></A>Additionally, since each extension may add up to two additional headers, and many calls involving interworking will be carrying bodies with multiple payloads, the risk of overflowing an MTU during UDP communications is becoming a potential problem.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029107"></A>This draft seeks to alleviate these problems by adding the capability to imply a set of SIP extensions necessary for fully-functional PSTN interworking with a single pair of &quot;Require&quot; and &quot;Proxy-Require&quot; headers.</P>
+</DIV>
+<DIV>
+<H1 CLASS="Heading1">
+<A NAME="pgfId-1029081"></A>2.	Included Features</H1>
+<P CLASS="Body">
+<A NAME="pgfId-1029086"></A>The following sections outline the extensions required for full-featured PSTN interworking and the rationale for their inclusion. Note that some features do not apply to native SIP clients, and only place requirements on those nodes which interface with the existing telephony infrastructure. These extensions are noted as appropriate.</P>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1029082"></A>2.1.	Transparent Transit of ISUP messages</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1029087"></A>To provide users the ability to take advantage of the full range of services afforded by the existing telephone network when placing calls from PSTN to PSTN across a SIP network, SIP messages will need to carry ISUP payloads from gateway to gateway.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029170"></A>All nodes which serve as SIP/PSTN interworking points and generate or accept the &quot;Require:&quot; header value defined in this document MUST provide for transparent transmission of ISUP messages in the body of SIP messages to trusted clients. This behavior is outlined in &quot;The application/ISUP media type&quot; (<A HREF="draft-roach-mmusic-sip-pstn-require-header-00.html#73535" CLASS="XRef">ref [2]</A>) and &quot;ISUP Parameters Expected in SIP Messages&quot; (<A HREF="draft-roach-mmusic-sip-pstn-require-header-00.html#55384" CLASS="XRef">ref [6]</A>).</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029132"></A>Proxy servers which accept the &quot;Proxy-Require:&quot; header value defined in this document SHOULD NOT behave in a way to preclude the transmission of ISUP bodies; they should pass any ISUP bodies through untouched. Exceptions include proxies which serve as policy enforcement points between providers' networks or to non-trusted clients.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029143"></A>UAC/UAS nodes which generate or accept the &quot;Require:&quot; header value defined in this document but do not serve as PSTN interworking points are not required to understand or generate ISUP messages under any circumstances; however, they SHOULD silently discard any ISUP bodies or body parts without generating an error code.</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1029039"></A>2.2.	Understanding of Multipart Bodies</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1029088"></A>In most PSTN interworking situations, the SIP body will be required to carry session information in addition to ISUP and/or billing information. </P>
+<P CLASS="Body">
+<A NAME="pgfId-1029165"></A>All nodes which generate or accept the &quot;Require:&quot; header value defined in this document MUST understand the multipart body extension defined in &quot;The multipart/sip-id media type&quot; (<A HREF="draft-roach-mmusic-sip-pstn-require-header-00.html#90944" CLASS="XRef">ref [3]</A>). Generation of SIP messages which are not multipart is, however, still allowable.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029142"></A>Proxies which accept the &quot;Proxy-Require:&quot; header value defined in this document MUST behave in such a way as to not preclude the transmission of multipart bodies.</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1029040"></A>2.3.	In-Band Transmission of DTMF information</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1029190"></A>Since the codec selected for voice transmission may not be ideally suited for carrying DTMF information, a symbolic method of transmitting this information in-band is necessary.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029204"></A>All nodes which generate or accept the &quot;Require:&quot; header value defined in this document and have direct control over the audio stream SHOULD be capable of generating in-band signalling representing DTMF information as defined in &quot;RTP Payload for DTMF Digits, Telephony Tones and Telephony Signals&quot; (<A HREF="draft-roach-mmusic-sip-pstn-require-header-00.html#91548" CLASS="XRef">ref [4]</A>).</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029205"></A>Nodes which do not perform PSTN interworking are not required to generate packets of type &quot;line&quot; and &quot;trunk,&quot; nor are they required to interpret any of the extended RTP payload signalling; however, they MUST not treat receipt of such packets as an error.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029206"></A>Nodes which do perform PSTN interworking SHOULD understand and generate &quot;tone,&quot; &quot;line,&quot; and &quot;trunk&quot; payloads as defined in the previously referenced document, when and if such payloads are applicable.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029207"></A>Those nodes which do not have direct control over the audio stream (e.g. media gateway controllers) have no requirements placed on them by this section.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029212"></A>Media gateways may claim full compliance with this document if they generate and understand &quot;tone,&quot; &quot;line,&quot; and &quot;trunk&quot; payloads as defined in the previously referenced document.</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1029045"></A>2.4.	Out-of-Band Transmission of DTMF information</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1029090"></A>In addition to the need to faithfully carry telephony tones across the audio channel, PSTN interworking situations will require the capability on the part of SIP nodes to collect further digits from the end user. This may be used, for example, to provide authentication information to a SIP node via DTMF.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029217"></A>All nodes which generate or accept the &quot;Require:&quot; header value defined in this document and have direct control over the audio stream SHOULD understand the SUBSCRIBE and NOTIFY extension designed for transport of DTMF information. This document is not yet written.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029225"></A>Proxy servers which accept the &quot;Proxy-Require:&quot; header value defined in this document MUST either understand the SUBSCRIBE and NOTIFY extensions mentioned above or allow SUBSCRIBE and NOTIFY requests and responses to pass between endpoints.</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1029046"></A>2.5.	Reliable Transmission of Provisional Responses</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1029091"></A>Since provisional messages, such as &quot;180 Ringing,&quot; will probably be used by most PSTN interworking implementations to trigger generation of messages indicating that a complete address has been collected, the reliable transmission of such messages is very important to prevent calls from timing out during the setup phase.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029232"></A>All nodes which generate or accept the &quot;Require:&quot; and/or &quot;Proxy-Require:&quot; header values defined in this document MUST implement the extension defined in &quot;Reliability of Provisional Responses in SIP&quot; (<A HREF="draft-roach-mmusic-sip-pstn-require-header-00.html#68900" CLASS="XRef">ref [7]</A>).</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1029249"></A>2.6.	Provisional Media Streams</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1029250"></A>To allow the transmission of messages and tones before a final connection has been established, SIP nodes which interwork with the PSTN need to be able to establish temporary media connections during this period.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029258"></A>All nodes which generate the &quot;Require:&quot; header values defined in this document MUST support receipt of temporary provisional media streams, as specified in &quot;Provisional SIP Responses with Media&quot; (<A HREF="draft-roach-mmusic-sip-pstn-require-header-00.html#24173" CLASS="XRef">ref [5]</A>).</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029269"></A>All nodes which serve as SIP/PSTN interworking points and accept the &quot;Require:&quot; header value defined in this document SHOULD transmit provisional media streams whenever appropriate (e.g. to deliver remote ring-tone).</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1029247"></A>2.7.	Mandatory Provisional Responses</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1029231"></A>As previously mentioned, the transmission of provisional responses serves an important role in PSTN interworking situations. To this end, such responses are required to be used consistently by clients.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029276"></A>All nodes which accept the &quot;Require:&quot; header value defined in this document MUST generate a provisional response with a code between 180 and 199 inclusive once it has determined that the INVITE request contains sufficient information to uniquely identify an end device.</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1029277"></A>2.8.	Mid-Call Transactions Which do not Change SIP State</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1029093"></A>When interworking with PSTN, there are several situations when PSTN nodes will need to send messages which do not correspond to any SIP operations to each other across a SIP network.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029280"></A>To allow transit of such methods, proxies which accept the &quot;Proxy-Require:&quot; header value defined in this document SHOULD allow INFO messages to be carried between endpoints. Exceptions include proxies which serve as policy enforcement points between providers' networks or to non-trusted clients; if the proxy elects to block transmission of the INFO message, it SHOULD return &quot;405 Method Not Allowed.&quot;</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029281"></A>UAC/UAS nodes which generate or accept the &quot;Require:&quot; header value defined in this document but do not serve as PSTN interworking points are not required to generate or understand INFO messages (in which case they may return &quot;501 Not Implemented&quot;); however, they MUST NOT treat such messages as fatal errors.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029288"></A>Nodes which do serve as PSTN interworking points SHOULD accept &quot;405 Method Not Allowed&quot; and &quot;501 Not Implemented&quot; responses to INFO requests as non-fatal.</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1029085"></A>2.9.	Call Control Services</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1029094"></A>To facilitate the implementation of value-added services, many of which require some degree of third party call control, units which support PSTN interworking will also need to support basic call control services.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029298"></A>All nodes which accept or generate the &quot;Require:&quot; header values defined in this document MUST understand the extensions defined in &quot;SIP Call Control Services&quot; (<A HREF="draft-roach-mmusic-sip-pstn-require-header-00.html#18509" CLASS="XRef">ref [8]</A>).</P>
+</DIV>
+</DIV>
+<DIV>
+<H1 CLASS="Heading1">
+<A NAME="pgfId-1029077"></A>3.	&quot;Require:&quot; and &quot;Proxy-Require:&quot; Headers</H1>
+<P CLASS="Body">
+<A NAME="pgfId-1029097"></A>The method for indicating protocol extensions is that described in sections 6.28 and 6.30 of &quot;SIP: Session Initiation Protocol&quot; (<A HREF="draft-roach-mmusic-sip-pstn-require-header-00.html#54324" CLASS="XRef">ref [1]</A>).</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029348"></A>Note that the headers defined in this document will be used instead of, not in addition to, the &quot;Require:&quot; and &quot;Proxy-Require:&quot; headers defined in the referenced documents.</P>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1029095"></A>3.1.	Values</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1029099"></A>The header value defined for the purpose of denoting the need for the above services is &quot;org.ietf.sip.pstn-interwork&quot;. When using the extensions described in this document, the client MUST include the extension name in both a &quot;Require:&quot; and a &quot;Proxy-Require:&quot; header for all INVITE requests.</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1029098"></A>3.2.	Negotiation</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1029313"></A>If a server requires the extensions described in this document but receives no appropriate &quot;Require:&quot; header from the client, it SHOULD respond with a &quot;403 Forbidden&quot; response which contains a &quot;Warning:&quot; header. The value of the warning code will be reserved from the IANA at a later date. Clients understanding the warning code SHOULD then automatically re-issue the INVITE request with appropriate headers.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029339"></A>If a server supports but does not require the extensions defined in this document and receives an INVITE which does not contain an appropriate &quot;Require:&quot; header, it SHOULD include the above mentioned &quot;Warning:&quot; header in all responses, including 100 and 200 class responses.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029342"></A>A client which supports but does not require the extensions defined in this document will respond to any 100 or 200 class messages containing the above mentioned &quot;Warning:&quot; header by re-issuing the INVITE request with an appropriate set of &quot;Require:&quot; and &quot;Proxy-Require:&quot; headers. The client MAY cache the fact that a particular URI supports PSTN interworking extensions.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029343"></A>If, upon re-issuing the INVITE, the client receives a 420 response (e.g. from a proxy), it SHOULD re-issue the original INVITE request. The client MAY cache the fact that the path to a particular URI does not support PSTN interworking extensions. If such information is not cached, the client MUST take other precautions to ensure that it does not become locked in a loop (e.g. INVITE, 403, INVITE, 200, INVITE, 403...).</P>
+</DIV>
+</DIV>
+<DIV>
+<H1 CLASS="Heading1">
+<A NAME="pgfId-1029332"></A>4.	References</H1>
+<P CLASS="Reference">
+<A NAME="pgfId-1029012"></A>[1]	<A NAME="54324"></A>M. Handley/H. Schulzrinne/E. Schooler/J. Rosenberg, &quot;SIP: Session Initiation Protocol&quot;, RFC 2543, IETF; March 1999.</P>
+<P CLASS="Reference">
+<A NAME="pgfId-1029017"></A>[2]	<A NAME="73535"></A>Christian Huitema, &quot;The application/ISUP media type&quot;, Internet Draft &lt;draft-ietf-sigtran-mime-isup-00.txt&gt;, IETF; Feb. 1999. Work in progress.</P>
+<P CLASS="Reference">
+<A NAME="pgfId-1029019"></A>[3]	<A NAME="90944"></A>Christian Huitema, &quot;The multipart/sip-id media type&quot;, Internet Draft &lt;draft-ietf-mmusic-sip-multipart-00.txt&gt;, IETF; Feb. 1999. Work in progress.</P>
+<P CLASS="Reference">
+<A NAME="pgfId-1028263"></A>[4]	<A NAME="91548"></A>H. Schulzrinne/S Petrack, &quot;RTP Payload for DTMF Digits, Telephony Tones and Telephony Signals&quot;, Internet Draft &lt;ietf-avt-tones-01.txt&gt;, IETF; June 1999. Work in progress.</P>
+<P CLASS="Reference">
+<A NAME="pgfId-1029022"></A>[5]	<A NAME="24173"></A>Adam Roach, &quot;Provisional SIP Responses with Media&quot;, Internet Draft &lt;draft-roach-mmusic-sip-provisional-media-00.txt&gt;, IETF; June 1999. Work in progress.</P>
+<P CLASS="Reference">
+<A NAME="pgfId-1029115"></A>[6]	<A NAME="55384"></A>Adam Roach, &quot;ISUP Parameters Expected in SIP Messages&quot;, Internet Draft &lt;draft-roach-sip-isup-parameters-00.txt&gt;, IETF; June 1999. Work in progress.</P>
+<P CLASS="Reference">
+<A NAME="pgfId-1029030"></A>[7]	<A NAME="68900"></A>J. Rosenberg/H. Schulzrinne, &quot;Reliability of Provisional Responses in SIP&quot;, Internet Draft &lt;draft-ietf-mmusic-sip-100rel-01.txt&gt;, IETF; May 1999. Work in progress.</P>
+<P CLASS="Reference">
+<A NAME="pgfId-1029027"></A>[8]	<A NAME="18509"></A>H. Schulzrinne/J. Rosenberg, &quot;SIP Call Control Services&quot;, Internet Draft &lt;draft-ietf-mmusic-sip-cc-01.txt&gt;, IETF; June/July 1999. Work in progress (not yet released).</P>
+<P CLASS="Reference">
+<A NAME="pgfId-1029067"></A>[9]	<A NAME="79282"></A>Steven R. Donovan, &quot;The SIP INFO Method&quot;, Internet Draft &lt;draft-ietf-mmusic-sip-info-method-00.txt&gt;, IETF; Feb. 1999. Work in progress.</P>
+</DIV>
+<DIV>
+<H1 CLASS="Heading1">
+<A NAME="pgfId-998279"></A>5.	Security Considerations</H1>
+<P CLASS="Body">
+<A NAME="pgfId-1028267"></A>This memo adds no security considerations beyond those applicable to the referenced documents.</P>
+</DIV>
+<DIV>
+<H1 CLASS="Heading1">
+<A NAME="pgfId-1028268"></A>6.	Author's Address</H1>
+<P CLASS="Body">
+<A NAME="pgfId-1028269"></A><A HREF="draft-roach-mmusic-sip-pstn-require-header-00.html#88493" CLASS="XRef">Adam Roach</A><BR>
+<A HREF="draft-roach-mmusic-sip-pstn-require-header-00.html#71684" CLASS="XRef">Ericsson Inc.</A><BR>
+Mailstop L-04<BR>
+851 International Pkwy.<BR>
+Richardson, TX 75081<BR>
+USA<BR>
+Phone: 972-583-7594<BR>
+Fax: 972-669-0154<BR>
+E-Mail: adam.roach@ericsson.com</P>
+<P CLASS="Body">
+<A NAME="pgfId-998280"></A>&nbsp;</P>
+</DIV>
+<TABLE NAME="Footer" WIDTH=100%><TR><TD>Roach</TD><TD ALIGN=RIGHT>[Page 7]</TD></TR></TABLE>
+</BODY>
+</HTML>

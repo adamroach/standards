@@ -1,0 +1,236 @@
+<?xml version="1.0"?>
+<!DOCTYPE rfc SYSTEM "rfc2629.dtd">
+<?rfc toc="no"?>
+<?rfc compact="yes"?>
+<rfc ipr="full2026">
+<front>
+<title abbrev="SIP 409 Response Code">
+A "Conflict" Response Code for the Session Initiation Protocol (SIP)
+</title>
+
+<author initials="A. B." surname="Roach" fullname="Adam Roach">
+<organization>dynamicsoft</organization>
+<address>
+<postal>
+<street>5100 Tennyson Pkwy</street>
+<street>Suite 1200</street>
+<city>Plano</city> <region>TX</region> <code>75024</code>
+<country>US</country>
+</postal>
+<email>adam@dynamicsoft.com</email>
+</address>
+</author>
+
+<date month="August" year="2003" />
+<area>Transport</area>
+
+<abstract><t>
+This document proposes an addition of a
+"409 Conflict" response code for the Session Initiation
+protocol. This response code is required for a number
+of application-specific purposes, and is expected to be
+useful in future extensions to the protocol.
+</t></abstract>
+</front>
+
+
+<middle>
+<section title="Introduction">
+<t>
+The first published version of SIP, RFC 2543, included
+a "409 Conflict" response code borrowed from HTTP/1.1
+<xref target="RFC2616" />. When copied into SIP, however,
+this response code was unfortunately defined to apply
+to an extremely narrow use case. This single use case
+was subsequently deprecated by RFC 3261
+<xref target="RFC3261" />; seeing no further
+use for the 409 response code, the authors elected to
+removed it at the same time.
+</t>
+<t>
+Operational experience has demonstrated that various 
+specialized applications occasionally encounter
+circumstances in which a request cannot be processed
+because doing so would result in an inconsistent or
+disallowed state. This document seeks to reinstate
+the 409 response code in a more general form
+so that such situations can be accurately signalled
+to UACs.
+</t>
+</section>
+
+<section title="&quot;409 Conflict&quot; Response Code">
+<t>
+   The 409 response is added to the "Client-Error" header
+   field definition. "409 Conflict" is used to indicate that
+   the request could not be completed due to a conflict with the current
+   state of the resource. This code is only allowed in situations where
+   it is expected that the user might be able to resolve the conflict
+   and resubmit the request.
+</t>
+<t>
+   Conflicts are most likely to occur in response to requests
+   that create state in the network, such as REGISTER and
+   SUBSCRIBE. The circumstances under which a 409 response
+   code is returned are expected to be highly dependent on the
+   application that the UAS provides.
+</t>
+</section>
+
+<section title="Backwards Compatibility">
+<t>
+It should be noted that section 8.1.3.2 of RFC 3261
+<xref target="RFC3261" /> defines UAC behavior upon
+receipt of an unrecognized response code. Under the
+behavior specified therein, a 409 response will be
+treated by a client that does not understand it as
+if it were a "400 Bad Request" response. The semantics
+defined for that response indicate that the UAC should
+not retry the same request without modification, which
+is generally a reasonable course of action to take in
+the case of a conflict.
+</t>
+</section>
+
+<section title="Security Considerations">
+<t>
+It is not beleived that the addition of the described 409
+response code
+has the ability to reveal sensitive information or provide
+any additional avenues for attack.
+</t>
+</section>
+
+<section title="IANA Considerations">
+<t>
+This document defines an additional SIP response code, which
+is to be added to the method and response-code sub-registry under
+http://www.iana.org/assignments/sip-parameters.
+</t>
+<list style="hanging">
+<t>Response Code Number:   409</t>
+<t>Default Reason Phrase:  Conflict</t>
+</list>
+</section>
+
+
+</middle>
+
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+
+<back>
+<references>
+<reference anchor='RFC3261'>
+<front>
+<title>SIP: Session Initiation Protocol</title>
+<author initials='J.' surname='Rosenberg' fullname='J. Rosenberg'>
+<organization /></author>
+<author initials='H.' surname='Schulzrinne' fullname='H. Schulzrinne'>
+<organization /></author>
+<author initials='G.' surname='Camarillo' fullname='G. Camarillo'>
+<organization /></author>
+<author initials='A.' surname='Johnston' fullname='A. Johnston'>
+<organization /></author>
+<author initials='J.' surname='Peterson' fullname='J. Peterson'>
+<organization /></author>
+<author initials='R.' surname='Sparks' fullname='R. Sparks'>
+<organization /></author>
+<author initials='M.' surname='Handley' fullname='M. Handley'>
+<organization /></author>
+<author initials='E.' surname='Schooler' fullname='E. Schooler'>
+<organization /></author>
+<date month='June' year='2002' /></front>
+<seriesInfo name='RFC' value='3261' />
+<format type='TXT' octets='647976' target='ftp://ftp.isi.edu/in-notes/rfc3261.txt' />
+</reference>
+
+<reference anchor='RFC2616'>
+<front>
+<title abbrev='HTTP/1.1'>Hypertext Transfer Protocol -- HTTP/1.1</title>
+<author initials='R.T.' surname='Fielding' fullname='Roy T. Fielding'>
+<organization>University of California, Irvine, Information and Computer Science</organization>
+<address>
+<postal>
+<street />
+<city>Irvine</city>
+<region>CA</region>
+<code>92697-3425</code>
+<country>US</country></postal>
+<phone>+1 949 824 1715</phone>
+<email>fielding@ics.uci.edu</email></address></author>
+<author initials='J.' surname='Gettys' fullname='James Gettys'>
+<organization>World Wide Web Consortium, MIT Laboratory for Computer Science</organization>
+<address>
+<postal>
+<street>545 Technology Square</street>
+<city>Cambridge</city>
+<region>MA</region>
+<code>02139</code>
+<country>US</country></postal>
+<facsimile>+1 617 258 8682</facsimile>
+<email>jg@w3.org</email></address></author>
+<author initials='J.C.' surname='Mogul' fullname='Jeffrey C. Mogul'>
+<organization>Compaq Computer Corporation, Western Research Laboratory</organization>
+<address>
+<postal>
+<street>250 University Avenue</street>
+<city>Palo Alto</city>
+<region>CA</region>
+<code>94301</code>
+<country>US</country></postal>
+<email>mogul@wrl.dec.com</email></address></author>
+<author initials='H.F.' surname='Nielsen' fullname='Henrik Frystyk Nielsen'>
+<organization>World Wide Web Consortium, MIT Laboratory for Computer Science</organization>
+<address>
+<postal>
+<street>545 Technology Square</street>
+<city>Cambridge</city>
+<region>MA</region>
+<code>02139</code>
+<country>US</country></postal>
+<facsimile>+1 617 258 8682</facsimile>
+<email>frystyk@w3.org</email></address></author>
+<author initials='L.' surname='Masinter' fullname='Larry Masinter'>
+<organization>Xerox Corporation</organization>
+<address>
+<postal>
+<street>3333 Coyote Hill Road</street>
+<city>Palo Alto</city>
+<region>CA</region>
+<code>94034</code>
+<country>US</country></postal>
+<email>masinter@parc.xerox.com</email></address></author>
+<author initials='P.J.' surname='Leach' fullname='Paul J. Leach'>
+<organization>Microsoft Corporation</organization>
+<address>
+<postal>
+<street>1 Microsoft Way</street>
+<city>Redmond</city>
+<region>WA</region>
+<code>98052</code>
+<country>US</country></postal>
+<email>paulle@microsoft.com</email></address></author>
+<author initials='T.' surname='Berners-Lee' fullname='Tim Berners-Lee'>
+<organization>World Wide Web Consortium, MIT Laboratory for Computer Science</organization>
+<address>
+<postal>
+<street>545 Technology Square</street>
+<city>Cambridge</city>
+<region>MA</region>
+<code>02139</code>
+<country>US</country></postal>
+<phone>+1 617 258 8682</phone>
+<email>timbl@w3.org</email></address></author>
+<date month='June' year='1999' />
+<abstract>
+<t>The Hypertext Transfer Protocol (HTTP) is an application-level protocol for distributed, collaborative, hypermedia information systems. It is a generic, stateless, protocol which can be used for many tasks beyond its use for hypertext, such as name servers and distributed object management systems, through extension of its request methods, error codes and headers. A feature of HTTP is the typing and negotiation of data representation, allowing systems to be built independently of the data being transferred.</t>
+<t>HTTP has been in use by the World-Wide Web global information initiative since 1990. This specification defines the protocol referred to as "HTTP/1.1", and is an update to RFC 2068.</t></abstract></front>
+<seriesInfo name='RFC' value='2616' />
+<format type='TXT' octets='422317' target='ftp://ftp.isi.edu/in-notes/rfc2616.txt' />
+<format type='PS' octets='5529857' target='ftp://ftp.isi.edu/in-notes/rfc2616.ps' />
+<format type='PDF' octets='550558' target='ftp://ftp.isi.edu/in-notes/rfc2616.pdf' />
+</reference>
+
+</references>
+</back>
+</rfc>

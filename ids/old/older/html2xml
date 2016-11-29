@@ -1,0 +1,137 @@
+#!/usr/bin/perl
+
+$file = shift;
+
+open (HTML, $file) || die $!;
+$discard = <HTML>;
+$doc = join('',<HTML>);
+close (HTML);
+
+$author = <<EOT
+    <author initials="A. B." surname="Roach" fullname="Adam Roach">
+      <organization>Tekelec</organization>
+      <address>
+        <postal>
+          <street>17210 Campbell Rd.</street>
+          <street>Suite 250</street>
+          <city>Dallas</city> <region>TX</region> <code>75252</code>
+          <country>US</country>
+        </postal>
+        <phone>sip:adam\@estacado.net</phone>
+        <email>adam\@nostrum.com</email>
+      </address>
+    </author>
+EOT
+;
+$area = "<area>Real Time Applications and Infrastructure</area>";
+
+# Strip ^M crap
+$doc =~ s/\r//gos;
+
+# Convert header
+$doc =~ s/<HEAD>/<front>/gom;
+$doc =~ s/<\/HEAD>/<\/front>/gom;
+$doc =~ s/<LINK REL[^>]*>[\r\n]*//gom;
+$doc =~ s/<TITLE>/<title>/;
+$doc =~ s/<\/TITLE>/<\/title>/;
+$doc =~ s/<META CONTENT="Date" VALUE="([^ ]*) ([^"]*)">/$author\n<date month="$1" year="$2" \/>\n$area\n/gom;
+$doc =~ s/<META (HTTP-EQUIV|NAME|CONTENT)[^>]*>[\r\n]*//gom;
+
+# Convert body wrapper
+$doc =~ s/<BODY[^>]*>/<middle>/gom;
+$doc =~ s/<\/BODY[^>]*>/<\/back>/gom;
+$doc =~ s/<\/HTML>/<\/rfc>/gom;
+
+# Remove tables
+$doc =~ s/<TABLE.*?<\/TABLE>//gom;
+
+# Convert forced line breaks
+$doc =~ s/<BR>/<vspace \/>/gom;
+
+# Strip Paragraph ID anchors
+$doc =~ s/<A NAME="pgfId.*?<\/A>//g;
+
+# Fix cross references
+$doc =~ s/([Ss]ection *)?<A HREF="([^#]*)#([^"]*)" CLASS="XRef">([^<]*)<\/A>/<xref target="$3" \/>/gos;
+$doc =~ s/>[\[\]0-9\r\n\t\. ]*<A NAME="([^"]*)"><\/A>/ anchor="$1">/gos;
+
+# Convert sections
+$doc =~ s/<DIV>[\r\n]*<H[1-9] CLASS="Heading[0-9]"([^>]*)>[\r\n]*[0-9 \.\t]*(.*?)<\/H[1-9]>/<section title="$2"$1>/gos;
+$doc =~ s/<\/DIV>/<\/section>/gom;
+
+# Strip dead sections
+$doc =~ s/<DIV>.*?<\/section>//gos;
+
+# Convert text
+$doc =~ s/<P CLASS="Body">(.*?)<\/P>/<t>$1<\/t>/gos;
+$doc =~ s/<P CLASS="comment">(.*?)<\/P>/<list style="hanging"><t>$1<\/t><\/list>/gos;
+$doc =~ s/<P CLASS="Definitions">[\r\n ]*([^:]*:) *(.*?)<\/P>/<list style="hanging"><t hangText="$1">$2<\/t><\/list>/gos;
+$doc =~ s/<P CLASS="Reference"([^>]*)>(.*?)<\/P>/"<reference$1>\n  <!-- ".fixcomment($2)." -->\n".mkref($2)."<\/reference>"/geos;
+
+# Convert Diagrams
+$doc =~ s/<P>[\r\n]*<PRE CLASS="Preformat">(.*?)<\/PRE>[\r\n]*<\/P>/"<figure><artwork><![CDATA[\n".fixart($1)."\n]]><\/artwork><\/figure>"/goes;
+$doc =~ s/<\/PRE>[\r\n]*<PRE[^>]*>/\n\n/g;
+
+# Split middle from back (assumes reference section)
+$doc =~ s/<section title="References"(.*?)<\/section>/<\/middle>\n<back>\n<references title="References"$1<\/references>/s;
+
+# Remove invalid &char; thingies
+$doc =~ s/&nbsp;/ /g;
+
+# Add front material
+$doc = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n<!DOCTYPE rfc SYSTEM \"rfc2629.dtd\">\n<?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>\n<?rfc toc=\"yes\"?>\n<?rfc compact=\"yes\" ?>\n<?rfc sortrefs=\"no\" ?>\n<rfc ipr=\"full3978\">\n".$doc;
+
+print $doc;
+
+sub fixcomment
+{
+  my ($s) = shift;
+  $s =~ s/\-+/-/g;
+  $s =~ s/&quot;/"/g;
+  $s =~ s/&lt;/</g;
+  $s =~ s/&gt;/>/g;
+  $s;
+}
+
+sub fixart
+{
+  my ($s) = shift;
+  $s =~ s/&quot;/"/g;
+  $s =~ s/&lt;/</g;
+  $s =~ s/&gt;/>/g;
+  $s;
+}
+
+sub mkref
+{
+  my ($s) = shift;
+  my ($body);
+  my ($authors,$title,$series,$number,$month,$year);
+
+  if ($s =~ /(.*?)&quot;(.*?)&quot;, (RFC|BCP) ([0-9]*), IETF[,;] ([A-Za-z]*) ([0-9]{4})/)
+  {
+    ($authors,$title,$series,$number,$month,$year) = ($1,$2,$3,$4,$5,$6);
+  }
+  elsif ($s =~ /(.*?)&quot;(.*?)&quot;, &lt;(draft-.*?)&gt;, IETF[,;] ([A-Za-z]*) ([0-9]{4})/)
+  {
+    ($authors,$title,$number,$month,$year) = ($1,$2,$3,$4,$5);
+    $series = "Internet-Draft";
+  }
+
+  my ($author, $first, $last);
+
+  $body .= "<front>\n";
+  $body .= "<title>$title</title>\n";
+  foreach $author (split / *, */,$authors)
+  {
+    next unless length ($author);
+    ($first,$last) = split " ",$author;
+    $body .= "<author initials='$first' surname='$last' fullname='$author'>\n";
+    $body .= "<organization /></author>\n";
+  }
+
+  $body .= "<date month='$month' year='$year' /></front>\n";
+  $body .= "<seriesInfo name='$series' value='$number' />\n";
+
+  $body;
+}

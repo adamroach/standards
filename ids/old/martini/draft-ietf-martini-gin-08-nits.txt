@@ -1,0 +1,69 @@
+idnits 2.12.17 
+
+martini/draft-ietf-martini-gin-08.txt:
+
+  Checking boilerplate required by RFC 5378 and the IETF Trust (see
+  http://trustee.ietf.org/license-info):
+  ----------------------------------------------------------------------------
+
+     No issues found here.
+
+  Checking nits according to http://www.ietf.org/id-info/1id-guidelines.txt:
+  ----------------------------------------------------------------------------
+
+     No issues found here.
+
+  Checking nits according to http://www.ietf.org/id-info/checklist :
+  ----------------------------------------------------------------------------
+
+  -- The draft header indicates that this document updates RFC3680, but the
+     abstract doesn't seem to mention this, which it should.
+
+
+  Miscellaneous warnings:
+  ----------------------------------------------------------------------------
+
+  == The copyright year in the IETF Trust and authors Copyright Line does not
+     match the current year
+
+     (Using the creation date from RFC3680, updated by this document, for
+     RFC5378 checks: 2002-10-31)
+
+  -- The document seems to lack a disclaimer for pre-RFC5378 work, but may have
+     content which was first submitted before 10 November 2008.  If you have
+     contacted all the original authors and they are all willing to grant the
+     BCP78 rights to the IETF Trust, then this is fine, and you can ignore this
+     comment.  If not, you may need to add the pre-RFC5378 disclaimer.  (See the
+     Legal Provisions document at http://trustee.ietf.org/license-info for more
+     information.)
+
+     IETF Trust Legal Provisions of 28-dec-2009, Section 6.c(iii):
+        This document may contain material from IETF Documents or IETF
+        Contributions published or made publicly available before
+        November 10, 2008.  The person(s) controlling the copyright in
+        some of this material may not have granted the IETF Trust the
+        right to allow modifications of such material outside the IETF
+        Standards Process. Without obtaining an adequate license from the
+        person(s) controlling the copyright in such materials, this
+        document may not be modified outside the IETF Standards Process,
+        and derivative works of it may not be created outside the IETF
+        Standards Process, except to format it for publication as an RFC
+        or to translate it into languages other than English.
+
+  -- The document date (September 27, 2010) is 2529 days in the past.  Is this
+     intentional?
+
+
+  Checking references for intended status: Proposed Standard
+  ----------------------------------------------------------------------------
+
+     (See RFCs 3967 and 4897 for information about using normative references
+     to lower-maturity documents in RFCs)
+
+  ** Downref: Normative reference to an Informational RFC: RFC 2104 (ref. '2')
+
+  ** Obsolete normative reference: RFC 3265 (ref. '6') (Obsoleted by RFC 6665)
+
+
+     Summary: 2 errors (**), 0 flaws (~~), 1 warning (==), 3 comments (--).
+

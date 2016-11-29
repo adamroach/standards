@@ -1,0 +1,43 @@
+idnits 2.12.17 
+
+martini/draft-ietf-martini-gin-04.txt:
+
+  Checking boilerplate required by RFC 5378 and the IETF Trust (see
+  http://trustee.ietf.org/license-info):
+  ----------------------------------------------------------------------------
+
+     No issues found here.
+
+  Checking nits according to http://www.ietf.org/id-info/1id-guidelines.txt:
+  ----------------------------------------------------------------------------
+
+     No issues found here.
+
+  Checking nits according to http://www.ietf.org/id-info/checklist :
+  ----------------------------------------------------------------------------
+
+     No issues found here.
+
+  Miscellaneous warnings:
+  ----------------------------------------------------------------------------
+
+  == The copyright year in the IETF Trust and authors Copyright Line does not
+     match the current year
+
+  -- The document date (June 17, 2010) is 2539 days in the past.  Is this
+     intentional?
+
+
+  Checking references for intended status: Proposed Standard
+  ----------------------------------------------------------------------------
+
+     (See RFCs 3967 and 4897 for information about using normative references
+     to lower-maturity documents in RFCs)
+
+  ** Downref: Normative reference to an Informational RFC: RFC 2104 (ref. '2')
+
+  == Outdated reference: draft-ietf-martini-reqs has been published as RFC 5947
+
+
+     Summary: 1 error (**), 0 flaws (~~), 2 warnings (==), 1 comment (--).
+

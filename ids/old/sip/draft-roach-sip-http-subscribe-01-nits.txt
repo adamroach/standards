@@ -1,0 +1,67 @@
+idnits 2.12.17 
+
+sip/draft-roach-sip-http-subscribe-01.txt:
+
+  Checking boilerplate required by RFC 5378 and the IETF Trust (see
+  http://trustee.ietf.org/license-info):
+  ----------------------------------------------------------------------------
+
+     No issues found here.
+
+  Checking nits according to http://www.ietf.org/id-info/1id-guidelines.txt:
+  ----------------------------------------------------------------------------
+
+  == No 'Intended status' indicated for this document; assuming Proposed
+     Standard
+
+
+  Checking nits according to http://www.ietf.org/id-info/checklist :
+  ----------------------------------------------------------------------------
+
+  ** The document seems to lack a Security Considerations section.
+
+  ** The document seems to lack a both a reference to RFC 2119 and the
+     recommended RFC 2119 boilerplate, even if it appears to use RFC 2119
+     keywords. 
+
+     RFC 2119, paragraph 2:
+        The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+        "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in
+        this document are to be interpreted as described in RFC 2119.
+
+     RFC 2119 keyword, line 122: '...hanism described in this document MUST...'
+     RFC 2119 keyword, line 124: '...  of HTML bodies SHOULD support the HT...'
+     RFC 2119 keyword, line 125: '...f Atom documents SHOULD support Atom <...'
+     RFC 2119 keyword, line 173: '...This RLS service MUST support subscrip...'
+     RFC 2119 keyword, line 182: '... The HTTP server MUST also return a SI...'
+     (6 more instances...)
+
+  Miscellaneous warnings:
+  ----------------------------------------------------------------------------
+
+  == The copyright year in the IETF Trust and authors Copyright Line does not
+     match the current year
+
+  -- The document date (January 8, 2009) is 2882 days in the past.  Is this
+     intentional?
+
+
+  Checking references for intended status: Proposed Standard
+  ----------------------------------------------------------------------------
+
+     (See RFCs 3967 and 4897 for information about using normative references
+     to lower-maturity documents in RFCs)
+
+  ** Obsolete normative reference: RFC 2616 (ref. '1') (Obsoleted by RFC 7230,
+     RFC 7231, RFC 7232, RFC 7233, RFC 7234, RFC 7235)
+
+  ** Obsolete normative reference: RFC 3265 (ref. '3') (Obsoleted by RFC 6665)
+
+  == Outdated reference: draft-nottingham-http-link-header has been published
+     as RFC 5988
+
+  -- Possible downref: Non-RFC (?) normative reference: ref. '8'
+
+
+     Summary: 4 errors (**), 0 flaws (~~), 3 warnings (==), 2 comments (--).
+

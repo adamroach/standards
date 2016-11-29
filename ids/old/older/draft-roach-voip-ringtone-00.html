@@ -1,0 +1,1914 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN"><HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+<META NAME="GENERATOR" CONTENT="Adobe FrameMaker 5.5/HTML Export Filter">
+<LINK REL="STYLESHEET" HREF="draft-roach-voip-ringtone-00.css" CHARSET="ISO-8859-1" TYPE="text/css">
+<TITLE>Ringback tones in SIP-Based Telephony</TITLE>
+<META NAME="RFC" CONTENT="Internet Draft">
+<META NAME="Title" CONTENT="Ringback tones in SIP-Based Telephony">
+<META NAME="Date" CONTENT="November 2000">
+<META NAME="Last Name" CONTENT="Roach">
+
+</HEAD>
+<BODY BGCOLOR="#ffffff">
+<DIV>
+<TABLE NAME="Header" WIDTH=100%><TR><TD>Internet Engineering Task Force<BR>Internet Draft<BR>Category: Informational</TD><TD ALIGN=RIGHT>Adam Roach<BR>Ericsson Inc.<BR>November 2000<BR>Expires May 2001<BR>&lt;draft-roach-voip-ringtone-00.fm55&gt;</TD></TR></TABLE>
+</DIV>
+<DIV>
+<H1 CLASS="Title">
+<A NAME="pgfId-998197"></A><A NAME="21178"></A>Ringback tones in SIP-Based Telephony</H1>
+</DIV>
+<DIV>
+<H1 CLASS="Heading0">
+<A NAME="pgfId-1015688"></A>Status of this Memo</H1>
+<P CLASS="Body">
+<A NAME="pgfId-1029004"></A>This document is an Internet-Draft and is in full conformance with all provisions of Section 10 of RFC2026.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029005"></A>Internet-Drafts are working documents of the Internet Engineering Task Force (IETF), its areas, and its working groups. Note that other groups may also distribute working documents as Internet-Drafts.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029006"></A>Internet-Drafts are draft documents valid for a maximum of six months and may be updated, replaced, or obsoleted by other documents at any time. It is inappropriate to use Internet-Drafts as reference material or cite them other than as &quot;work in progress&quot;.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029007"></A>The list of current Internet-Drafts can be accessed at http://www.ietf.org/ietf/lid-abstracts.txt</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029008"></A>The list of Internet-Draft Shadow Directories can be accessed at http://www.ietf.org/shadow.html</P>
+<P CLASS="Body">
+<A NAME="pgfId-1029009"></A>This document is an individual submission to the IETF. Comments should be directed to the authors. </P>
+</DIV>
+<DIV>
+<H1 CLASS="Heading0">
+<A NAME="pgfId-998448"></A>Abstract</H1>
+<P CLASS="Body">
+<A NAME="pgfId-1015693"></A>This document describes a mechanism by which an appropriate ringback tone may be played to the calling party when the called party's device is alerting. It is written specifcally to address the case where the Session Initiation Protocol (SIP) is used to initiate voice-over-IP calls. It also lists ringback characteristics for several countries.</P>
+</DIV>
+<DIV>
+<H1 CLASS="Heading1">
+<A NAME="pgfId-998278"></A>1.	Introduction</H1>
+<P CLASS="Body">
+<A NAME="pgfId-1029036"></A>In the current PSTN (public switched telephony network), users expect to hear an appropriate ringback tone when contacting a node in a foreign network. For example, when placing a call from the United States to Sweden, a Swedish ringback tone is heard by the caller.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1032309"></A>Further, it is currently possible that calls terminating on a PBX exchange receive special ringback tones which are distinct from those used by the PSTN in the country in which the PBX resides.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1032286"></A>In order to ease the transition from standard circuit-switched telephony to voice-over-IP telephony, it is desirable that, when feasable, user experience remains largely the same. In the case of providing an appropriate ringback tone, doing so is quite trivial.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1032334"></A>This document defines two extension headers to SIP <A HREF="draft-roach-voip-ringtone-00.html#29413" CLASS="XRef">[1]</A> to allow such behavior. The first, &quot;Country,&quot; specifies the country in which the called party is located. The second, &quot;Ringback,&quot; allows the called party to give an specific frequency and cadence for the ringback tone. Both headers are expected to be included only in &quot;180 Ringing&quot; responses to &quot;INVITE&quot; requests.</P>
+</DIV>
+<DIV>
+<H1 CLASS="Heading1">
+<A NAME="pgfId-998471"></A>2.	Client Handling</H1>
+<P CLASS="Body">
+<A NAME="pgfId-1032344"></A>If a SIP UAS (called party) wishes to suggest that a specific ringback tone be played to the calling party, it may include one or both of the &quot;Country&quot; or &quot;Ringback&quot; headers (defined below) in its &quot;180 Ringing&quot; responses to &quot;INVITE&quot; requests. For robust operation, it is strongly recommended that UASs wishing to use this extension include both headers.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1032477"></A>UACs (calling party agents) may elect to implement either or both of the &quot;Ringback&quot; and &quot;Country&quot; headers (although, for robustness sake, are encouraged to implement both). Note that low-memory embedded devices may not have the luxury of storing ringtone information for scores of countries; similarly, many clients may choose not to parse out the slightly more complicated &quot;Ringback&quot; syntax and instead opt to use the &quot;Country&quot; header exclusively.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1032349"></A>When a UAC (calling party) understanding either or both of the &quot;Country&quot; and &quot;Ringback&quot; headers receives them in a &quot;180 Ringing&quot; message, it can use them to generate an approprite ringback tone for the calling user. In the case that only a &quot;Country&quot; header is present, the ringback tone is that defined in section <A HREF="draft-roach-voip-ringtone-00.html#38380" CLASS="XRef">4.</A> When a &quot;Ringback&quot; header is present, it will define a specific tone (frequency and cadence) to be played to the calling user.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1032469"></A>In the case that the UAC understands both headers, &quot;Ringback&quot; is expected to take precedence over &quot;Country.&quot; This allows the definition of custom ringback tones (e.g. for special PBX ringback).</P>
+<P CLASS="Body">
+<A NAME="pgfId-1032497"></A>It is suggested that nodes implementing the extension described in this document also implement the &quot;Reliability of Provisional Responses in SIP&quot; extension <A HREF="draft-roach-voip-ringtone-00.html#88231" CLASS="XRef">[6]</A>; this will ensure delivery of the &quot;180 Ringing&quot; response.</P>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1029041"></A>2.1.	New SIP headers</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1032252"></A>This table expands on tables 4 and 5  in RFC 2543 <A HREF="draft-roach-voip-ringtone-00.html#29413" CLASS="XRef">[1]</A>.</P>
+<P><PRE CLASS="Preformat"><A NAME="pgfId-1032256"></A>Header field         where  proxy ACK BYE CAN INV OPT REG
+---------------------------------------------------------
+Country               180          -   -   -   o   -   - 
+Ringback              180          -   -   -   o   -   - </PRE>
+</P>
+<DIV>
+<H3 CLASS="Heading3">
+<A NAME="pgfId-1032212"></A>2.1.1.	SIP &quot;Country&quot; Header</H3>
+<P CLASS="Body">
+<A NAME="pgfId-1032271"></A>The following SIP header is defined.</P>
+<P><PRE CLASS="Preformat"><A NAME="pgfId-1032213"></A>Country      =  &quot;Country&quot; &quot;:&quot; country-code
+country-code =  2(lower-case)
+lower-case   =  %x61-7a ; lowercase letters a-z</PRE>
+</P>
+<P CLASS="Body">
+<A NAME="pgfId-1032335"></A>This header is used to convey which country-specific ringback tone is to be presented to the calling party. The defined values for &quot;country-code&quot; and their corresponding ringback tone definitions are given in section <A HREF="draft-roach-voip-ringtone-00.html#38380" CLASS="XRef">4.</A></P>
+<P CLASS="Body">
+<A NAME="pgfId-1032645"></A>Note that the &quot;Country&quot; header may be generally useful in other situations which are outside the scope of this document. Draft authors are encouraged to reuse the &quot;Country&quot; header where appropriate. The syntax and accepted values (based on ISO 3166 <A HREF="draft-roach-voip-ringtone-00.html#80820" CLASS="XRef">[3]</A> and the IANA TLD list <A HREF="draft-roach-voip-ringtone-00.html#71420" CLASS="XRef">[2]</A>) are expected remain the largely the same, with the possible addition of parameters when needed (e.g. &quot;Country: gb;subdivision=sct&quot;).</P>
+</DIV>
+<DIV>
+<H3 CLASS="Heading3">
+<A NAME="pgfId-1029045"></A>2.1.2.	SIP &quot;Ringback&quot; Header</H3>
+<P CLASS="Body">
+<A NAME="pgfId-1032278"></A>The following SIP header is defined.</P>
+<P><PRE CLASS="Preformat"><A NAME="pgfId-1032227"></A>Ringback     =  &quot;Ringback&quot; &quot;:&quot; frequency &quot;;&quot; cadence
+frequency    =  1*DIGIT [(&quot;x&quot; | &quot;+&quot;) 1*DIGIT]
+cadence      =  duration &quot;;&quot; duration *(&quot;;&quot; duration &quot;;&quot; duration)
+duration     =  1*DIGIT [&quot;.&quot; 1*DIGIT]</PRE>
+</P>
+<P CLASS="Body">
+<A NAME="pgfId-1032340"></A>When present, this header gives a specific definition of the ringback tone to be played for the calling party.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1032373"></A>The &quot;frequency&quot; parameter specifies the tone to be played. All frequency numbers represent a sine-wave frequency in hertz.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1032378"></A>If the frequency paremeter contins a single number, it represents a pure tone to be played. If a frequency of the format &quot;f1 + f2&quot; is specified, both frequencies f1 and f2  should be played simultaneously to generate the tone. If a frequency of the format &quot;f1 x f2&quot; is speficied, the frequency f1 should be modulated by the frequency f2 to generate the tone.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1032385"></A>The remaining numbers in the &quot;Ringback&quot; header represent the cadence at which the tone is to be played. There must always be an even number of cadence parameters; clients receiving an odd number of cadence parameters are expected to ignore the &quot;Ringback&quot; header as malformed. The first cadence parameter is a decimal duration, in seconds, for which the tone is to be played. The second parameter is a duration, in seconds, which should be paused before playing the tone again. Third and subsequent parameters specify additional on/off periods for the tone. All ringtone patterns repeat.</P>
+</DIV>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1032160"></A>2.2.	Alternate Handling</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1029046"></A>If no &quot;Country&quot; or &quot;Ringback&quot; header is present, clients implementing this extension may choose to make an intellegent guess about the called party's country.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1032395"></A>If the &quot;180 Ringing&quot; message contains a &quot;Contact&quot; header using a symbolic name (i.e. resolvable by DNS), the client takes note of the top-level-domain of this contact address for the processing described below. If the &quot;Contact&quot; header contains an IP address, the client may attempt to perform a DNS lookup on this IP address to determine the top-level-domain for its preferred name.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1032396"></A>If a top-level-domain could not be determined from the &quot;Contact&quot; header, the same series of steps is applied to the address in the &quot;To&quot; header.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1032399"></A>If a country-specific top-level-domain can be determined via the steps above, the client will play the ringtone matching this country (as if it had been specified in a &quot;Country&quot; header). Note that the country-specific top-level-domain &quot;uk&quot; should be treated the same as &quot;gb.&quot;</P>
+<P CLASS="Body">
+<A NAME="pgfId-1032400"></A>If a non-country-specific top-level-domain is determined, it is suggested that the client play one of: the ringback tone local to the calling party, North American ringback tone (see section <A HREF="draft-roach-voip-ringtone-00.html#56818" CLASS="XRef">4.165.</A>), or a generic ringback tone meeting the requirements described in ITU-T E.180 <A HREF="draft-roach-voip-ringtone-00.html#35103" CLASS="XRef">[4]</A> (e.g. 425 Hz at a cadence of 1 second on, 4 seconds off). It would be appropriate to allow the user to select between these three modes of operation to suit personal preferences.</P>
+</DIV>
+</DIV>
+<DIV>
+<H1 CLASS="Heading1">
+<A NAME="pgfId-1030345"></A>3.	Proxy Handling</H1>
+<P CLASS="Body">
+<A NAME="pgfId-1032490"></A>No special proxy handling is required by this extension.</P>
+</DIV>
+<DIV>
+<H1 CLASS="Heading1">
+<A NAME="pgfId-1032489"></A>4.	<A NAME="38380"></A>Ringtone Characteristics by Country</H1>
+<P CLASS="Body">
+<A NAME="pgfId-1032198"></A>This section provides a reference for relevant information about a number of countries. &quot;Code&quot; is the two-letter &quot;country-code&quot; token to be used in the &quot;Country:&quot; header. &quot;Frequency&quot; describes the frequency/frequencies which compose(s) the ringback tone, and the remaining information describes the cadence of the ringback tone.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1032442"></A>The two-letter country codes in this section are largely aligned which those published in ISO 3166 <A HREF="draft-roach-voip-ringtone-00.html#80820" CLASS="XRef">[3]</A>, with some minor additions from the IANA document &quot;Root-Zone Whois Information&quot; <A HREF="draft-roach-voip-ringtone-00.html#71420" CLASS="XRef">[2]</A> for practical considerations.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1032436"></A>The ringback tones and cadences are beleived to be the most common form of ringback tone in the associated country, as published in Suppliment 2 to ITU-T E.180 <A HREF="draft-roach-voip-ringtone-00.html#18415" CLASS="XRef">[5]</A>.</P>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031721"></A>4.1.	Albania</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031726"></A>Code: al<BR>
+Frequency: 425 Hz<BR>
+- 1 second on<BR>
+- 4 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031727"></A>4.2.	Algeria</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031728"></A>Code: dz<BR>
+Frequency: 25 Hz<BR>
+- 1.5 seconds on<BR>
+- 3.5 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031729"></A>4.3.	Angola</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031730"></A>Code: ao<BR>
+Frequency: 25 Hz<BR>
+- 1 second on<BR>
+- 5 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031731"></A>4.4.	Anguilla</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031732"></A>Code: ai<BR>
+Frequency: 440 Hz + 480 Hz<BR>
+- 2 seconds on<BR>
+- 4 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031733"></A>4.5.	Antigua And Barbuda</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031734"></A>Code: ag<BR>
+Frequency: 440 Hz<BR>
+- 2 seconds on<BR>
+- 4 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031735"></A>4.6.	Argentina</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031736"></A>Code: ar<BR>
+Frequency: 425 Hz<BR>
+- 1 second on<BR>
+- 4 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031737"></A>4.7.	Aruba</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031738"></A>Code: aw<BR>
+Frequency: 425 Hz<BR>
+- 1 second on<BR>
+- 4 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031739"></A>4.8.	Ascension</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031740"></A>Code: ac<BR>
+Frequency: 440 Hz<BR>
+- 1 second on<BR>
+- 3 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031741"></A>4.9.	Australia</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031742"></A>Code: au<BR>
+Frequency: 400 Hz modulated with 17 Hz<BR>
+- 0.4 seconds on<BR>
+- 0.2 seconds off<BR>
+- 0.4 seconds on<BR>
+- 2 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031743"></A>4.10.	Austria</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031744"></A>Code: at<BR>
+Frequency: 420 Hz<BR>
+- 1 second on<BR>
+- 5 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031745"></A>4.11.	Bahamas</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031746"></A>Code: bs<BR>
+Frequency: 400 Hz<BR>
+- 2 seconds on<BR>
+- 4 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031747"></A>4.12.	Bahrain</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031748"></A>Code: bh<BR>
+Frequency: 440 Hz<BR>
+- 0.4 seconds on<BR>
+- 0.2 seconds off<BR>
+- 0.4 seconds on<BR>
+- 2 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031749"></A>4.13.	Barbados</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031750"></A>Code: bb<BR>
+Frequency: 440 Hz + 480 Hz<BR>
+- 2 seconds on<BR>
+- 4 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031751"></A>4.14.	Belarus</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031752"></A>Code: by<BR>
+Frequency: 425 Hz<BR>
+- 0.8 seconds on<BR>
+- 3.2 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031753"></A>4.15.	Belgium</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031754"></A>Code: be<BR>
+Frequency: 425 Hz<BR>
+- 1 second on<BR>
+- 3 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031755"></A>4.16.	Benin</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031756"></A>Code: bj<BR>
+Frequency: 440 Hz<BR>
+- 1.5 seconds on<BR>
+- 3.5 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031757"></A>4.17.	Bermuda</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031758"></A>Code: bm<BR>
+Frequency: 440 Hz + 480 Hz<BR>
+- 2 seconds on<BR>
+- 4 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031759"></A>4.18.	Bhutan</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031760"></A>Code: bt<BR>
+Frequency: 400 Hz + 25 Hz<BR>
+- 0.4 seconds on<BR>
+- 0.2 seconds off<BR>
+- 0.4 seconds on<BR>
+- 2.6 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031761"></A>4.19.	Botswana</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031762"></A>Code: bw<BR>
+Frequency: 400 Hz<BR>
+- 0.4 seconds on<BR>
+- 0.2 seconds off<BR>
+- 0.4 seconds on<BR>
+- 2 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031763"></A>4.20.	Brazil</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031764"></A>Code: br<BR>
+Frequency: 425 Hz<BR>
+- 1 second on<BR>
+- 4 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031765"></A>4.21.	British Indian Ocean Territory</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031766"></A>Code: io<BR>
+Frequency: 440 Hz<BR>
+- 1 second on<BR>
+- 3 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031767"></A>4.22.	British Virgin Islands</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031768"></A>Code: vg<BR>
+Frequency: 440 Hz + 480 Hz<BR>
+- 2 seconds on<BR>
+- 4 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031769"></A>4.23.	Brunei Darussalam</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031770"></A>Code: bn<BR>
+Frequency: 400 Hz + 450 Hz<BR>
+- 0.4 seconds on<BR>
+- 0.3 seconds off<BR>
+- 0.4 seconds on<BR>
+- 2 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031771"></A>4.24.	Bulgaria</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031772"></A>Code: bg<BR>
+Frequency: 425 Hz<BR>
+- 1 second on<BR>
+- 9 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031773"></A>4.25.	Burkina Faso</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031774"></A>Code: bf<BR>
+Frequency: 425 Hz<BR>
+- 1 second on<BR>
+- 4 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031775"></A>4.26.	Burundi</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031776"></A>Code: bi<BR>
+Frequency: 425 Hz<BR>
+- 1.7 seconds on<BR>
+- 3.3 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031777"></A>4.27.	Cameroon</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031778"></A>Code: cm<BR>
+Frequency: 440 Hz<BR>
+- 1.7 seconds on<BR>
+- 3.3 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031779"></A>4.28.	Canada</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031780"></A>Code: ca<BR>
+Frequency: 440 Hz + 480 Hz<BR>
+- 2 seconds on<BR>
+- 4 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031781"></A>4.29.	Cayman Islands</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031782"></A>Code: ky<BR>
+Frequency: 425 Hz<BR>
+- 1 second on<BR>
+- 4 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031783"></A>4.30.	Central African Rep.</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031784"></A>Code: cf<BR>
+Frequency: 425 Hz<BR>
+- 1.7 seconds on<BR>
+- 3.3 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031785"></A>4.31.	Channel Islands: Jersey</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031786"></A>Code: je<BR>
+Frequency: 400 Hz + 450 Hz<BR>
+- 0.4 seconds on<BR>
+- 0.2 seconds off<BR>
+- 0.4 seconds on<BR>
+- 2 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031787"></A>4.32.	Chile</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031788"></A>Code: cl<BR>
+Frequency: 400 Hz<BR>
+- 1 second on<BR>
+- 3 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031789"></A>4.33.	China</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031790"></A>Code: cn<BR>
+Frequency: 450 Hz<BR>
+- 1 second on<BR>
+- 4 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031791"></A>4.34.	Comoros</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031792"></A>Code: km<BR>
+Frequency: 425 Hz<BR>
+- 1.71 seconds on<BR>
+- 3.31 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031793"></A>4.35.	Costa Rica</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031794"></A>Code: cr<BR>
+Frequency: 425 Hz<BR>
+- 1.2 seconds on<BR>
+- 4.6 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031795"></A>4.36.	Cote D'Ivoire</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031796"></A>Code: ci<BR>
+Frequency: 50 Hz<BR>
+- 1.66 seconds on<BR>
+- 3.33 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031797"></A>4.37.	Croatia</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031798"></A>Code: hr<BR>
+Frequency: 425 Hz<BR>
+- 1 second on<BR>
+- 4 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031799"></A>4.38.	Cuba</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031800"></A>Code: cu<BR>
+Frequency: 440 Hz + 480 Hz<BR>
+- 2 seconds on<BR>
+- 4 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031801"></A>4.39.	Cyprus</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031802"></A>Code: cy<BR>
+Frequency: 425 Hz<BR>
+- 1.5 seconds on<BR>
+- 3 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031803"></A>4.40.	Czech Rep.</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031804"></A>Code: cz<BR>
+Frequency: 425 Hz<BR>
+- 1 second on<BR>
+- 4 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031805"></A>4.41.	Denmark</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031806"></A>Code: dk<BR>
+Frequency: 425 Hz<BR>
+- 1 second on<BR>
+- 4 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031807"></A>4.42.	Djibouti</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031808"></A>Code: dj<BR>
+Frequency: 425 Hz<BR>
+- 1.5 seconds on<BR>
+- 3.5 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031809"></A>4.43.	Dominica </H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031810"></A>Code: dm<BR>
+Frequency: 440 Hz + 480 Hz<BR>
+- 2 seconds on<BR>
+- 4 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031811"></A>4.44.	Dominican Rep.</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031812"></A>Code: do<BR>
+Frequency: 400 Hz<BR>
+- 0.4 seconds on<BR>
+- 0.2 seconds off<BR>
+- 0.4 seconds on<BR>
+- 2.2 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031813"></A>4.45.	Ecuador</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031814"></A>Code: ec<BR>
+Frequency: 425 Hz<BR>
+- 1.2 seconds on<BR>
+- 4.65 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031815"></A>4.46.	Egypt</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031816"></A>Code: eg<BR>
+Frequency: 425 Hz modulated with 50 Hz<BR>
+- 2 seconds on<BR>
+- 1 second off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031817"></A>4.47.	El Salvador</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031818"></A>Code: sv<BR>
+Frequency: 425 Hz<BR>
+- 1.2 seconds on<BR>
+- 5 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031819"></A>4.48.	Estonia</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031820"></A>Code: ee<BR>
+Frequency: 425 Hz<BR>
+- 1 second on<BR>
+- 4 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031821"></A>4.49.	Ethiopia</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031822"></A>Code: et<BR>
+Frequency: 425 Hz<BR>
+- 1 second on<BR>
+- 4 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031823"></A>4.50.	Falkland Islands</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031824"></A>Code: fk<BR>
+Frequency: 400 Hz + 450 Hz<BR>
+- 0.4 seconds on<BR>
+- 0.2 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031825"></A>4.51.	Faroe Islands</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031826"></A>Code: fo<BR>
+Frequency: 425 Hz<BR>
+- 1 second on<BR>
+- 4 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031827"></A>4.52.	Fiji</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031828"></A>Code: fj<BR>
+Frequency: 133 Hz modulated with 16 Hz<BR>
+- 0.4 seconds on<BR>
+- 0.2 seconds off<BR>
+- 0.4 seconds on<BR>
+- 2 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031829"></A>4.53.	Finland</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031830"></A>Code: fi<BR>
+Frequency: 425 Hz<BR>
+- 1 second on<BR>
+- 4 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031831"></A>4.54.	France</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031832"></A>Code: fr<BR>
+Frequency: 440 Hz<BR>
+- 1.5 seconds on<BR>
+- 3.5 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031833"></A>4.55.	French Polynesia</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031834"></A>Code: pf<BR>
+Frequency: 440 Hz<BR>
+- 1.5 seconds on<BR>
+- 3.5 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031835"></A>4.56.	Gabon</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031836"></A>Code: ga<BR>
+Frequency: 440 Hz<BR>
+- 1.5 seconds on<BR>
+- 3 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031837"></A>4.57.	Gambia</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031838"></A>Code: gm<BR>
+Frequency: 425 Hz<BR>
+- 1 second on<BR>
+- 4 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031839"></A>4.58.	Germany</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1032453"></A>code: de<BR>
+Frequency: 425 Hz<BR>
+- 0.25 seconds on<BR>
+- 4 seconds off<BR>
+- 1 second on<BR>
+- 4 seconds off<BR>
+- 1 second on<BR>
+- 4 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1032452"></A>4.59.	Ghana</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031840"></A>Code: gh<BR>
+Frequency: 400 Hz<BR>
+- 1 second on<BR>
+- 4 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031841"></A>4.60.	Gibraltar</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031842"></A>Code: gi<BR>
+Frequency: 400 Hz + 450 Hz<BR>
+- 0.4 seconds on<BR>
+- 0.2 seconds off<BR>
+- 0.4 seconds on<BR>
+- 2 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031843"></A>4.61.	Greece</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031844"></A>Code: gr<BR>
+Frequency: 425 Hz<BR>
+- 1 second on<BR>
+- 4 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031845"></A>4.62.	Greenland</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031846"></A>Code: gl<BR>
+Frequency: 445 Hz<BR>
+- 1 second on<BR>
+- 4 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031847"></A>4.63.	Grenada</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031848"></A>Code: gd<BR>
+Frequency: 440 Hz + 480 Hz<BR>
+- 2 seconds on<BR>
+- 4 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031849"></A>4.64.	Guadeloupe </H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031850"></A>Code: gp<BR>
+Frequency: 440 Hz<BR>
+- 1.5 seconds on<BR>
+- 3.5 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031851"></A>4.65.	Guiana </H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031852"></A>Code: gf<BR>
+Frequency: 440 Hz<BR>
+- 1.5 seconds on<BR>
+- 3.5 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031853"></A>4.66.	Guinea</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031854"></A>Code: gn<BR>
+Frequency: 450 Hz<BR>
+- 0.4 seconds on<BR>
+- 0.2 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031855"></A>4.67.	Guyana</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031856"></A>Code: gy<BR>
+Frequency: 425 Hz<BR>
+- 1.75 seconds on<BR>
+- 3.25 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031857"></A>4.68.	Honduras</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031858"></A>Code: hn<BR>
+Frequency: 440 Hz<BR>
+- 0.5 seconds on<BR>
+- 4 seconds off<BR>
+- 2 seconds on<BR>
+- 4 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031859"></A>4.69.	Hongkong</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031860"></A>Code: hk<BR>
+Frequency: 440 Hz + 480 Hz<BR>
+- 0.4 seconds on<BR>
+- 0.2 seconds off<BR>
+- 0.4 seconds on<BR>
+- 3 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031861"></A>4.70.	Hungary</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031862"></A>Code: hu<BR>
+Frequency: 425 Hz<BR>
+- 1.2 seconds on<BR>
+- 3.7 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031863"></A>4.71.	Iceland</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031864"></A>Code: is<BR>
+Frequency: 425 Hz<BR>
+- 1.2 seconds on<BR>
+- 4.7 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031865"></A>4.72.	India</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031866"></A>Code: in<BR>
+Frequency: 400 Hz modulated with 25 Hz<BR>
+- 0.4 seconds on<BR>
+- 0.2 seconds off<BR>
+- 0.4 seconds on<BR>
+- 2.6 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031867"></A>4.73.	Indonesia</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031868"></A>Code: id<BR>
+Frequency: 425 Hz<BR>
+- 1 second on<BR>
+- 4 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031869"></A>4.74.	Iran</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031870"></A>Code: ir<BR>
+Frequency: 425 Hz<BR>
+- 1 second on<BR>
+- 4 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031871"></A>4.75.	Iraq</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031872"></A>Code: iq<BR>
+Frequency: 400 Hz<BR>
+- CONTINUOUS</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031873"></A>4.76.	Ireland</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031874"></A>Code: ie<BR>
+Frequency: 400 Hz<BR>
+- 0.4 seconds on<BR>
+- 0.2 seconds off<BR>
+- 0.4 seconds on<BR>
+- 2 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031875"></A>4.77.	Israel</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031876"></A>Code: il<BR>
+Frequency: 400 Hz<BR>
+- 1 second on<BR>
+- 3 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031877"></A>4.78.	Italy</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031878"></A>Code: it<BR>
+Frequency: 425 Hz<BR>
+- 1 second on<BR>
+- 4 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031879"></A>4.79.	Jamaica</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031880"></A>Code: jm<BR>
+Frequency: 440 Hz modulated with 480 Hz<BR>
+- 2 seconds on<BR>
+- 4 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031881"></A>4.80.	Japan</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031882"></A>Code: jp<BR>
+Frequency: 400 Hz modulated with 16 Hz<BR>
+- 1 second on<BR>
+- 2 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031883"></A>4.81.	Jordan</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031884"></A>Code: jo<BR>
+Frequency: 420 Hz modulated with 40 Hz<BR>
+- 1.2 seconds on<BR>
+- 4.8 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031885"></A>4.82.	Kenya</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031886"></A>Code: ke<BR>
+Frequency: 425 Hz<BR>
+- 1 second on<BR>
+- 4 seconds off<BR>
+- 1 second on<BR>
+- 2 seconds off<BR>
+- 1 second on<BR>
+- 5 seconds off<BR>
+- 0.4 seconds on<BR>
+- 0.2 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031887"></A>4.83.	Kiribati</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031888"></A>Code: ki<BR>
+Frequency: 425 Hz<BR>
+- 0.4 seconds on<BR>
+- 0.2 seconds off<BR>
+- 0.4 seconds on<BR>
+- 2 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1032133"></A>4.84.	Korea (Democratic People's Republic of)</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1032134"></A>Code: kp<BR>
+Frequency: 440 Hz + 480 Hz<BR>
+- 1 second on<BR>
+- 2 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1032152"></A>4.85.	Korea (Republic of)</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1032139"></A>Code: kr<BR>
+Frequency: 440 Hz + 480 Hz<BR>
+- 1 second on<BR>
+- 2 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031891"></A>4.86.	Kuwait</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031892"></A>Code: kw<BR>
+Frequency: 425 Hz<BR>
+- 1 second on<BR>
+- 4 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031893"></A>4.87.	Kyrgyzstan</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031894"></A>Code: kg<BR>
+Frequency: 425 Hz<BR>
+- 0.8 seconds on<BR>
+- 3.2 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031895"></A>4.88.	Lao</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031896"></A>Code: la<BR>
+Frequency: 425 Hz<BR>
+- 1 second on<BR>
+- 4 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031897"></A>4.89.	Lebanon</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031898"></A>Code: lb<BR>
+Frequency: 435 Hz<BR>
+- 1.2 seconds on<BR>
+- 4.4 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031899"></A>4.90.	Liberia</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031900"></A>Code: lr<BR>
+Frequency: 425 Hz<BR>
+- 1 second on<BR>
+- 4 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031901"></A>4.91.	Lithuania</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031902"></A>Code: it<BR>
+Frequency: 425 Hz<BR>
+- 0.8 seconds on<BR>
+- 3.2 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031903"></A>4.92.	Luxembourg</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031904"></A>Code: lu<BR>
+Frequency: 425 Hz<BR>
+- 1 second on<BR>
+- 4 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031905"></A>4.93.	Macau</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031906"></A>Code: mo<BR>
+Frequency: 425 Hz<BR>
+- 1 second on<BR>
+- 4 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031907"></A>4.94.	Madagascar</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031908"></A>Code: mg<BR>
+Frequency: 25 Hz<BR>
+- 1.66 seconds on<BR>
+- 3.33 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031909"></A>4.95.	Malawi</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031910"></A>Code: mw<BR>
+Frequency: 425 Hz<BR>
+- 1 second on<BR>
+- 4 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031911"></A>4.96.	Malaysia</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031912"></A>Code: my<BR>
+Frequency: 425 Hz<BR>
+- 0.4 seconds on<BR>
+- 0.2 seconds off<BR>
+- 0.4 seconds on<BR>
+- 2 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031913"></A>4.97.	Maldives</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031914"></A>Code: mv<BR>
+Frequency: 400 Hz<BR>
+- 0.4 seconds on<BR>
+- 0.2 seconds off<BR>
+- 0.4 seconds on<BR>
+- 2 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031915"></A>4.98.	Mali</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031916"></A>Code: ml<BR>
+Frequency: 425 Hz<BR>
+- 1.7 seconds on<BR>
+- 3.3 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031917"></A>4.99.	Malta</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031918"></A>Code: mt<BR>
+Frequency: 400 Hz + 450 Hz<BR>
+- 0.4 seconds on<BR>
+- 0.2 seconds off<BR>
+- 0.4 seconds on<BR>
+- 2 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031919"></A>4.100.	Martinique </H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031920"></A>Code: mq<BR>
+Frequency: 440 Hz<BR>
+- 1.5 seconds on<BR>
+- 3.5 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031921"></A>4.101.	Mauritania</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031922"></A>Code: mr<BR>
+Frequency: 425 Hz<BR>
+- 1.5 seconds on<BR>
+- 3.5 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031923"></A>4.102.	Mauritius</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031924"></A>Code: mu<BR>
+Frequency: 425 Hz<BR>
+- 1 second on<BR>
+- 4 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031925"></A>4.103.	Mayotte</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031926"></A>Code: yt<BR>
+Frequency: 440 Hz<BR>
+- 1.5 seconds on<BR>
+- 3.5 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031927"></A>4.104.	Mexico</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031928"></A>Code: mx<BR>
+Frequency: 425 Hz<BR>
+- 1 second on<BR>
+- 4 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031929"></A>4.105.	Moldova</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031930"></A>Code: md<BR>
+Frequency: 425 Hz<BR>
+- 0.8 seconds on<BR>
+- 3.2 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031931"></A>4.106.	Montserrat</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031932"></A>Code: ms<BR>
+Frequency: 440 Hz + 480 Hz<BR>
+- 2 seconds on<BR>
+- 4 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031933"></A>4.107.	Morocco</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031934"></A>Code: mc<BR>
+Frequency: 425 Hz<BR>
+- 1.66 seconds on<BR>
+- 3.33 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031935"></A>4.108.	Mozambique</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031936"></A>Code: mz<BR>
+Frequency: 400 Hz<BR>
+- 1 second on<BR>
+- 5 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031937"></A>4.109.	Namibia</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031938"></A>Code: na<BR>
+Frequency: 400 Hz modulated with 33 Hz<BR>
+- 0.4 seconds on<BR>
+- 0.2 seconds off<BR>
+- 0.4 seconds on<BR>
+- 2 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031939"></A>4.110.	Nauru</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031940"></A>Code: nr<BR>
+Frequency: 400 Hz<BR>
+- 1 second on<BR>
+- 4 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031941"></A>4.111.	Nepal</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031942"></A>Code: np<BR>
+Frequency: 425 Hz<BR>
+- 1.1 seconds on<BR>
+- 3.1 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031943"></A>4.112.	Netherlands</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031944"></A>Code: nl<BR>
+Frequency: 425 Hz<BR>
+- 1 second on<BR>
+- 4 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031945"></A>4.113.	New Caledonia</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031946"></A>Code: nc<BR>
+Frequency: 440 Hz<BR>
+- 1.5 seconds on<BR>
+- 3.5 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031947"></A>4.114.	New Zealand</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031948"></A>Code: nz<BR>
+Frequency: 400 Hz + 450 Hz<BR>
+- 0.4 seconds on<BR>
+- 0.2 seconds off<BR>
+- 0.4 seconds on<BR>
+- 2 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031949"></A>4.115.	Niger</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031950"></A>Code: ne<BR>
+Frequency: 440 Hz<BR>
+- 1.7 seconds on<BR>
+- 3.3 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031951"></A>4.116.	Nigeria</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031952"></A>Code: ng<BR>
+Frequency: 400 Hz<BR>
+- 2 seconds on<BR>
+- 4 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031953"></A>4.117.	Norway</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031954"></A>Code: no<BR>
+Frequency: 425 Hz<BR>
+- 1 second on<BR>
+- 4 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031955"></A>4.118.	Oman</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031956"></A>Code: om<BR>
+Frequency: 425 Hz<BR>
+- 0.4 seconds on<BR>
+- 0.2 seconds off<BR>
+- 0.4 seconds on<BR>
+- 2 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031957"></A>4.119.	Pakistan</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031958"></A>Code: pk<BR>
+Frequency: 450 Hz<BR>
+- 1 second on<BR>
+- 4 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031959"></A>4.120.	Panama</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031960"></A>Code: pa<BR>
+Frequency: 425 Hz<BR>
+- 1.2 seconds on<BR>
+- 4.65 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031961"></A>4.121.	Papua New Guinea</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031962"></A>Code: pg<BR>
+Frequency: 425 Hz<BR>
+- 0.4 seconds on<BR>
+- 0.2 seconds off<BR>
+- 0.4 seconds on<BR>
+- 2 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031963"></A>4.122.	Paraguay</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031964"></A>Code: py<BR>
+Frequency: 425 Hz<BR>
+- 1 second on<BR>
+- 4 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031965"></A>4.123.	Philippines</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031966"></A>Code: ph<BR>
+Frequency: 450 Hz<BR>
+- 1 second on<BR>
+- 10 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031967"></A>4.124.	Poland</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031968"></A>Code: pl<BR>
+Frequency: 425 Hz<BR>
+- 1 second on<BR>
+- 4 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031969"></A>4.125.	Portugal</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031970"></A>Code: pt<BR>
+Frequency: 400 Hz<BR>
+- 1 second on<BR>
+- 5 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031971"></A>4.126.	Qatar</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031972"></A>Code: qa<BR>
+Frequency: 400 Hz + 450 Hz<BR>
+- 0.4 seconds on<BR>
+- 0.2 seconds off<BR>
+- 0.4 seconds on<BR>
+- 2.2 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031973"></A>4.127.	Reunion </H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031974"></A>Code: re<BR>
+Frequency: 440 Hz<BR>
+- 1.5 seconds on<BR>
+- 3.5 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031975"></A>4.128.	Romania</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031976"></A>Code: ro<BR>
+Frequency: 400 Hz modulated with 16 Hz<BR>
+- 2 seconds on<BR>
+- 4 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031977"></A>4.129.	Russia</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031978"></A>Code: ru<BR>
+Frequency: 425 Hz<BR>
+- 0.8 seconds on<BR>
+- 3.2 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031979"></A>4.130.	Rwanda</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031980"></A>Code: rw<BR>
+Frequency: 440 Hz<BR>
+- 1.7 seconds on<BR>
+- 3.3 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031981"></A>4.131.	St Helena</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031982"></A>Code: sh<BR>
+Frequency: 400 Hz + 450 Hz<BR>
+- 0.4 seconds on<BR>
+- 0.2 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031983"></A>4.132.	St Kitts And Nevis</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031984"></A>Code: kn<BR>
+Frequency: 440 Hz + 480 Hz<BR>
+- 2 seconds on<BR>
+- 4 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031985"></A>4.133.	St Lucia</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031986"></A>Code: lc<BR>
+Frequency: 425 Hz<BR>
+- 0.375 seconds on<BR>
+- 0.25 seconds off<BR>
+- 0.375 seconds on<BR>
+- 2 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031987"></A>4.134.	St Pierre And Miquelon</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031988"></A>Code: pm<BR>
+Frequency: 440 Hz<BR>
+- 1.5 seconds on<BR>
+- 3.5 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031989"></A>4.135.	St Vincent And The Grenadines</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031990"></A>Code: vc<BR>
+Frequency: 400 Hz + 450 Hz<BR>
+- 0.2 seconds on<BR>
+- 0.4 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031991"></A>4.136.	San Marino</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031992"></A>Code: sm<BR>
+Frequency: 425 Hz<BR>
+- 1 second on<BR>
+- 4 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031993"></A>4.137.	Sao Tome And Principe</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031994"></A>Code: st<BR>
+Frequency: 425 Hz<BR>
+- 1 second on<BR>
+- 5 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031995"></A>4.138.	Saudi Arabia</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031996"></A>Code: sa<BR>
+Frequency: 425 Hz<BR>
+- 1.2 seconds on<BR>
+- 4.6 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031997"></A>4.139.	Senegal</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1031998"></A>Code: sn<BR>
+Frequency: 400 Hz<BR>
+- 1.7 seconds on<BR>
+- 3.3 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1031999"></A>4.140.	Seychelles</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1032000"></A>Code: sc<BR>
+Frequency: 425 Hz<BR>
+- 0.4 seconds on<BR>
+- 0.2 seconds off<BR>
+- 0.4 seconds on<BR>
+- 2 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1032001"></A>4.141.	Sierra Leone</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1032002"></A>Code: sl<BR>
+Frequency: 425 Hz<BR>
+- 1 second on<BR>
+- 4 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1032003"></A>4.142.	Singapore</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1032004"></A>Code: sg<BR>
+Frequency: 425 Hz modulated with 24 Hz<BR>
+- 0.4 seconds on<BR>
+- 0.2 seconds off<BR>
+- 0.4 seconds on<BR>
+- 2 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1032005"></A>4.143.	Slovakia</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1032006"></A>Code: sk<BR>
+Frequency: 425 Hz<BR>
+- 1 second on<BR>
+- 4 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1032007"></A>4.144.	Slovenia</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1032008"></A>Code: si<BR>
+Frequency: 425 Hz<BR>
+- 1 second on<BR>
+- 4 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1032009"></A>4.145.	Solomon</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1032010"></A>Code: sb<BR>
+Frequency: 400 Hz + 450 Hz<BR>
+- 0.4 seconds on<BR>
+- 0.2 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1032011"></A>4.146.	South Africa</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1032012"></A>Code: za<BR>
+Frequency: 400 Hz modulated with 33 Hz<BR>
+- 0.4 seconds on<BR>
+- 0.2 seconds off<BR>
+- 0.4 seconds on<BR>
+- 2 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1032013"></A>4.147.	Spain</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1032014"></A>Code: es<BR>
+Frequency: 425 Hz<BR>
+- 1.5 seconds on<BR>
+- 3 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1032015"></A>4.148.	Sri Lanka</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1032016"></A>Code: lk<BR>
+Frequency: 425 Hz<BR>
+- 0.4 seconds on<BR>
+- 0.2 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1032017"></A>4.149.	Suriname</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1032018"></A>Code: sr<BR>
+Frequency: 425 Hz<BR>
+- 15 seconds on<BR>
+- 0.5 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1032019"></A>4.150.	Swaziland</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1032020"></A>Code: sz<BR>
+Frequency: 400 Hz<BR>
+- 0.4 seconds on<BR>
+- 0.2 seconds off<BR>
+- 0.4 seconds on<BR>
+- 4 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1032021"></A>4.151.	Sweden</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1032022"></A>Code: se<BR>
+Frequency: 425 Hz<BR>
+- 1 second on<BR>
+- 5 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1032023"></A>4.152.	Switzerland</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1032024"></A>Code: ch<BR>
+Frequency: 425 Hz<BR>
+- 1 second on<BR>
+- 4 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1032025"></A>4.153.	Syria</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1032026"></A>Code: sy<BR>
+Frequency: 425 Hz<BR>
+- 1 second on<BR>
+- 4 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1032027"></A>4.154.	Tajikistan</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1032028"></A>Code: tj<BR>
+Frequency: 425 Hz<BR>
+- 0.8 seconds on<BR>
+- 3.2 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1032029"></A>4.155.	Tanzania</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1032030"></A>Code: tz<BR>
+Frequency: 400 Hz<BR>
+- CONTINUOUS</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1032031"></A>4.156.	Thailand</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1032032"></A>Code: th<BR>
+Frequency: 400 Hz<BR>
+- 1 second on<BR>
+- 4 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1032033"></A>4.157.	Trinidad And Tobago</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1032034"></A>Code: tt<BR>
+Frequency: 440 Hz + 480 Hz<BR>
+- 2 seconds on<BR>
+- 4 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1032035"></A>4.158.	Tunisia</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1032036"></A>Code: tn<BR>
+Frequency: 425 Hz<BR>
+- 1.2 seconds on<BR>
+- 4.6 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1032037"></A>4.159.	Turkey</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1032038"></A>Code: tr<BR>
+Frequency: 450 Hz<BR>
+- 2 seconds on<BR>
+- 4 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1032039"></A>4.160.	Turkmenistan</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1032040"></A>Code: tm<BR>
+Frequency: 25 Hz<BR>
+- 0.4 seconds on<BR>
+- 4 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1032041"></A>4.161.	Turks And Caicos Islands</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1032042"></A>Code: tc<BR>
+Frequency: 440 Hz + 480 Hz<BR>
+- 2 seconds on<BR>
+- 4 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1032043"></A>4.162.	Uganda</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1032044"></A>Code: ug<BR>
+Frequency: 133 Hz + 17 Hz<BR>
+- 0.25 seconds on<BR>
+- 0.5 seconds off<BR>
+- 0.25 seconds on<BR>
+- 2 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1032045"></A>4.163.	United Arab Emirates</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1032046"></A>Code: ae<BR>
+Frequency: 400 Hz + 450 Hz<BR>
+- 0.4 seconds on<BR>
+- 0.2 seconds off<BR>
+- 0.4 seconds on<BR>
+- 2 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1032047"></A>4.164.	United Kingdom</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1032048"></A>Code: gb<BR>
+Frequency: 400 Hz + 450 Hz<BR>
+- 0.4 seconds on<BR>
+- 0.2 seconds off<BR>
+- 0.4 seconds on<BR>
+- 2 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1032049"></A>4.165.	<A NAME="56818"></A>United States</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1032050"></A>Code: us<BR>
+Frequency: 440 Hz + 480 Hz<BR>
+- 2 seconds on<BR>
+- 4 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1032051"></A>4.166.	United States Virgin Islands</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1032052"></A>Code: vi<BR>
+Frequency: 440 Hz + 480 Hz<BR>
+- 2 seconds on<BR>
+- 4 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1032053"></A>4.167.	Uruguay</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1032054"></A>Code: uy<BR>
+Frequency: 425 Hz<BR>
+- 1 second on<BR>
+- 4 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1032055"></A>4.168.	Vanuatu</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1032056"></A>Code: vu<BR>
+Frequency: 425 Hz<BR>
+- 1 second on<BR>
+- 4 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1032057"></A>4.169.	Wallis And Futuna</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1032058"></A>Code: wf<BR>
+Frequency: 440 Hz<BR>
+- 1.5 seconds on<BR>
+- 3.5 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1032059"></A>4.170.	Western Samoa</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1032060"></A>Code: ws<BR>
+Frequency: 425 Hz modulated with 25 Hz<BR>
+- 0.375 seconds on<BR>
+- 0.25 seconds off<BR>
+- 0.375 seconds on<BR>
+- 2 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1032061"></A>4.171.	Yugoslavia</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1032062"></A>Code: yu<BR>
+Frequency: 450 Hz modulated with 25 Hz<BR>
+- 1 second on<BR>
+- 9 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1032063"></A>4.172.	Zambia</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1032064"></A>Code: zm<BR>
+Frequency: 425 Hz<BR>
+- 1 second on<BR>
+- 4 seconds off</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1032065"></A>4.173.	Zimbabwe</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1032066"></A>Code: zw<BR>
+Frequency: 400 Hz modulated with 450 Hz<BR>
+- 0.4 seconds on<BR>
+- 0.2 seconds off<BR>
+- 0.4 seconds on<BR>
+- 2 seconds off</P>
+</DIV>
+</DIV>
+<DIV>
+<H1 CLASS="Heading1">
+<A NAME="pgfId-1032528"></A>5.	Example Messages</H1>
+<P CLASS="Body">
+<A NAME="pgfId-1032540"></A>This section provides a collection of SIP messages which demonstrate the various uses of the &quot;Country:&quot; and &quot;Ringback:&quot; headers.</P>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1032529"></A>5.1.	Dual-Tone Ringback</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1032530"></A>This is an example of how a message might look for a standard two-tone ringback. In this example, both a country code of &quot;us&quot; and the standard US ringtone are specified.</P>
+<P><PRE CLASS="Preformat"><A NAME="pgfId-1032509"></A>SIP/2.0 180 Ringing
+To: &lt;sip:adam.roach@ericsson.com&gt;
+From: &lt;sip:ake.svensson@ericsson.se&gt;;tag=012345
+Call-ID: cmk2109fj@ws17.ericsson.se
+CSeq: 397 INVITE
+Via: SIP/2.0/UDP fw.ericsson.se
+Via: SIP/2.0/UDP ws17.ericsson.se
+Country: us
+Ringback: 440+480;2;4
+Content-Length: 0</PRE>
+</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1032533"></A>5.2.	Modulated Ringback</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1032327"></A>This is almost identical to the previous example, with the exception that Australian ringback is being provided. This demonstrates the syntax for modulated ringback tones.</P>
+<P><PRE CLASS="Preformat"><A NAME="pgfId-1032539"></A>SIP/2.0 180 Ringing
+To: &lt;sip:bruce@ericsson.com.au&gt;
+From: &lt;sip:adam.roach@ericsson.com&gt;;tag=34789a
+Call-ID: 13098jv@b04a24.ericsson.com
+CSeq: 32849 INVITE
+Via: SIP/2.0/UDP b04a24.ericsson.com
+Country: au
+Ringback: 400x17;0.4;0.2;0.4;2
+Content-Length: 0</PRE>
+</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1032545"></A>5.3.	Continuous Ringtone</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1032548"></A>Some localities provide an continuous ringtone, which indicates that there is no pause in the tone whatsoever. The suggested syntax for encoding such a ringtone is to provide an &quot;off&quot; period of 0.</P>
+<P><PRE CLASS="Preformat"><A NAME="pgfId-1032328"></A>SIP/2.0 180 Ringing
+To: &lt;sip:sjk@pc.tz&gt;
+From: &lt;sip:adam.roach@ericsson.com&gt;;tag=39835afe
+Call-ID: ckn9q23k@b04a24.ericsson.com
+CSeq: 3249786 INVITE
+Via: SIP/2.0/UDP b04a24.ericsson.com
+Country: tz
+Ringback: 400;1;0
+Content-Length: 0</PRE>
+</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1032616"></A>5.4.	No &quot;Ringback&quot; specified</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1032558"></A>This is an example of a message which specifies no particular ringtone pattern. If the calling party client understands the country code of &quot;gb,&quot; it will provide the proper ringback tone; otherwise, it will provide default handling.</P>
+<P><PRE CLASS="Preformat"><A NAME="pgfId-1032329"></A>SIP/2.0 180 Ringing
+To: &lt;sip:ebm@company.co.uk&gt;
+From: &lt;sip:adam.roach@ericsson.com&gt;;tag=1987
+Call-ID: 1358fjslk83la0@b04a24.ericsson.com
+CSeq: 985325 INVITE
+Via: SIP/2.0/UDP b04a24.ericsson.com
+Country: gb
+Content-Length: 0</PRE>
+</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1032324"></A>5.5.	Special PBX double-ring ringback</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1032562"></A>This message gives an example in which the default ringtone for the country should be overridden (e.g. because the call has terminated on a PBX). The &quot;Country&quot; header is still provided so that clients not implementing the &quot;Ringback&quot; header can still provided a regionalised dialtone.</P>
+<P><PRE CLASS="Preformat"><A NAME="pgfId-1032565"></A>SIP/2.0 180 Ringing
+To: &lt;sip:adam.roach@ericsson.com&gt;
+From: &lt;sip:ake.svensson@ericsson.se&gt;;tag=012345
+Call-ID: cmk2109fj@ws17.ericsson.se
+CSeq: 397 INVITE
+Via: SIP/2.0/UDP fw.ericsson.se
+Via: SIP/2.0/UDP ws17.ericsson.se
+Country: us
+Ringback: 440+480;0.5;0.5;1;4
+Content-Length: 0</PRE>
+</P>
+</DIV>
+<DIV>
+<H2 CLASS="Heading2">
+<A NAME="pgfId-1032317"></A>5.6.	Custom-defined ringback</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1032586"></A>This message gives an example in which the specific ringback tone has been provided, but no country. Clients not implementing the &quot;Ringback&quot; header will treat this as a normal &quot;Ringing&quot; message.</P>
+<P><PRE CLASS="Preformat"><A NAME="pgfId-1032581"></A>SIP/2.0 180 Ringing
+To: &lt;sip:adam.roach@ericsson.com&gt;
+From: &lt;sip:ake.svensson@ericsson.se&gt;;tag=012345
+Call-ID: cmk2109fj@ws17.ericsson.se
+CSeq: 397 INVITE
+Via: SIP/2.0/UDP fw.ericsson.se
+Via: SIP/2.0/UDP ws17.ericsson.se
+Ringback: 350;0.2;0.2;0.2;4
+Content-Length: 0</PRE>
+</P>
+</DIV>
+</DIV>
+<DIV>
+<H1 CLASS="Heading1">
+<A NAME="pgfId-1032295"></A>6.	References</H1>
+<P CLASS="Reference">
+<A NAME="pgfId-1028263"></A>[1]	<A NAME="29413"></A>M. Handley/H. Schulzrinne/E. Schooler/J. Rosenberg, &quot;SIP: Session Initiation Protocol&quot;, RFC 2543, IETF; March 1999.</P>
+<P CLASS="Reference">
+<A NAME="pgfId-1032193"></A>[2]	<A NAME="71420"></A>&quot;Root-Zone Whois Information,&quot; http://www.iana.org/cctld/cctld-whois.htm, IANA.</P>
+<P CLASS="Reference">
+<A NAME="pgfId-1029038"></A>[3]	<A NAME="80820"></A>&quot;Codes for the Representation of Names of Countries,&quot; ISO 3166, ISO; 1993</P>
+<P CLASS="Reference">
+<A NAME="pgfId-1029037"></A>[4]	<A NAME="35103"></A>&quot;Technical Characteristics of Tones for the Telephone Service,&quot; ITU-T E.180, ITU; 1993</P>
+<P CLASS="Reference">
+<A NAME="pgfId-1032408"></A>[5]	<A NAME="18415"></A>&quot;Various Tones Used in National Networks,&quot; ITU-T E.180 Suppliment 2, ITU; January 1994</P>
+<P CLASS="Reference">
+<A NAME="pgfId-1032502"></A>[6]	<A NAME="88231"></A>J. Rosenberg/H. Schulzrinne, &quot;Reliability of Provisional Responses in SIP,&quot; draft-ietf-sip-100rel-02.txt, IETF; June 2000. Work in progress.</P>
+</DIV>
+<DIV>
+<H1 CLASS="Heading1">
+<A NAME="pgfId-998279"></A>7.	Security Considerations</H1>
+<P CLASS="Body">
+<A NAME="pgfId-1028267"></A>Note that user location (including information as broad as &quot;country&quot;) may be considered private information. As such, the user should have direct control over the presence and value of the &quot;Country:&quot; header. </P>
+</DIV>
+<DIV>
+<H1 CLASS="Heading1">
+<A NAME="pgfId-1028268"></A>8.	Author's Address</H1>
+<P CLASS="Body">
+<A NAME="pgfId-1029017"></A><A HREF="draft-roach-voip-ringtone-00.html#88493" CLASS="XRef">Adam Roach</A><BR>
+<A HREF="draft-roach-voip-ringtone-00.html#71684" CLASS="XRef">Ericsson Inc.</A><BR>
+Mailstop L-04<BR>
+851 International Pkwy.<BR>
+Richardson, TX 75081<BR>
+USA<BR>
+Phone: +1 972-583-7594<BR>
+Fax: 972-669-0154<BR>
+E-Mail: adam.roach@ericsson.com</P>
+</DIV>
+<TABLE NAME="Footer" WIDTH=100%><TR><TD>Roach</TD><TD ALIGN=RIGHT>[Page 36]</TD></TR></TABLE>
+</BODY>
+</HTML>

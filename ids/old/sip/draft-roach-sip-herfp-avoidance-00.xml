@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE rfc SYSTEM "rfc2629.dtd">
+<?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
+
+<?rfc toc="yes" ?>
+<?rfc compact="yes" ?>
+<?rfc sortrefs="no" ?>
+
+<rfc ipr="full3978" docName="draft-roach-sip-herfp-avoidance-01">
+<front>
+    <title abbrev="MSRP Relays">
+        An Extension to Avoid the Occurance of HERFP
+    </title>
+    <author initials="A. B." surname="Roach" fullname="Adam Roach">
+      <organization>Estacado Systems</organization>
+      <address>
+        <postal>
+          <street>17210 Campbell Rd.</street>
+          <street>Suite 250</street>
+          <city>Dallas</city> <region>TX</region> <code>75252</code>
+          <country>US</country>
+        </postal>
+        <phone>sip:adam@estacado.net</phone>
+        <email>adam@estacado.net</email>
+      </address>
+    </author>
+    <author initials="R." surname="Sparks" fullname="Robert Sparks">
+      <organization>Estacado Systems</organization>
+      <address>
+        <postal>
+          <street>17210 Campbell Rd.</street>
+          <street>Suite 250</street>
+          <city>Dallas</city> <region>TX</region> <code>75252</code>
+          <country>US</country>
+        </postal>
+        <phone>sip:RjS@estacado.net</phone>
+        <email>RjS@estacado.net</email>
+      </address>
+    </author>
+    <author initials="B." surname="Campbell" fullname="Ben Campbell">
+      <organization>Estacado Systems</organization>
+      <address>
+        <postal>
+          <street>17210 Campbell Rd.</street>
+          <street>Suite 250</street>
+          <city>Dallas</city> <region>TX</region> <code>75252</code>
+          <country>US</country>
+        </postal>
+        <phone>sip:ben@estacado.net</phone>
+        <email>ben@estacado.net</email>
+      </address>
+    </author>
+
+    <date month="October" day="16" year="2005" />
+    <area>Transport</area>
+    <workgroup>SIP WG</workgroup>
+
+  <abstract>
+  <t>
+    The processing of SIP reqeusts by certain types of proxies
+    can lead to situations in which multiple non-sucessful responses
+    are generated, only one of which is ultimately reported to the
+    originator of the response. In many cases, these non-successful
+    responses indicate conditions that can be addressed by the
+    requestor, and then retried; therefore, the elision of them
+    by proxies can lead to a decrease in the rechability of certain
+    network entites.
+  </t>
+  <t>
+    This document defines a mechanism that can be employed to 
+    avoid the dropping of such requests with minimal implementation
+    complexity.
+  </t>
+  </abstract>
+</front>
+
+<middle>
+  <section title= "Conventions and Definitions" >
+    <t>
+  The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
+  "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be
+  interpreted as described in
+  <!-- xref target= "RFC2119" -->RFC 2119<!-- /xref -->.
+    </t>
+  </section>
+
+  <section title="Introduction">
+  <t>
+    <!-- xref target= "RFC3261" -->RFC 3261<!-- /xref -->
+    defines a behavior by which a proxy is allowed,
+    upon receipt of a request, to retarget it to multiple
+    destinations (serially, in parallel, or a combination
+    of the two). This behavior is referred to as "forking."
+    If a proxy forks a request, it generally waits until
+    one of the multiple requests succeeds (with a 200-class
+    response), or until they all fail. Upon failure,
+    only one error response -- the one deemed "best" by
+    the proxy -- is returned towards the UAC that initiated
+    the request. As a consequence, such forking can result
+    in a significant loss of information about the User
+    Agent Servers that were contacted.
+    This behavior leads to a whole class of problems,
+    historically 
+    referred to as Heterogeneous Error Response Forking
+    Problems (HERFPs). These problems include the inablity
+    to perform HTTP-style authentication through forking
+    proxies, difficulty in negotiating many extensions,
+    and forcing proxies to recurse on 300-class responses
+    (thus taking control of such retargeting out of the hands
+    of the users).
+  </t>
+  <t>
+    Several key architects of the SIP protocol have been working
+    on this problem for nearly five years. Even the most
+    promising of such solutions 
+    (<!-- xref target= "" -->draft-mahy-sipping-herfp-fix-00<!-- /xref -->)
+    result in a significant increase in implementation complexity
+    at proxies, and require gyrations at the UAC to deal with
+    relatively intimate knowledge of "failed" branches of
+    forked requests.
+  </t>
+  <t>
+    As a consequence of the stubborness of this class of problem
+    and the resultant complexity of any proposed solutions, the
+    authors of this document have concluded that HERFPs may be
+    incurable, and should instead be avoided. This document
+    describes prophylactic measures by which networks can
+    prevent HERFPs altogether, instead of trying to solve
+    the symptoms that arise after such problems have already
+    occured.
+  </t>
+  </section>
+
+  <section title="Mechanism">
+    <t>
+    </t>
+    <section title="User Agent Client Behavior">
+    <t>
+      User Agent Clients that wish to require that the behavior
+      exhibited in this document can indicate such a requirement
+      by including a "Proxy-Require" header field containing a
+      token of "rmt". ("rmt" is an abbreviation for "Redirect
+      Multiple Targets").
+    </t>
+    <t>
+      In general, however, proxies implementing the mechanism
+      described in this document are expected to apply it in
+      all cases; the inclusion of such a "Proxy-Require" header
+      field is useful only if the UAC wishes for requests through
+      non-compliant proxies to actually fail.
+    </t>
+    <t>
+      User Agent Clients are generally required to handle 300-class
+      responses with multiple "Contact" header fields in an
+      intelligent manner, typically taking q-values into
+      consideration. The mechanism described in this document
+      does nothing to change this fact; however, it does
+      emphasize the importance of such handling.
+    </t>
+    <t>
+      As with proxies, one common ordering mechanism for clients
+      is to use the qvalue parameter of targets
+      obtained from Contact header fields.  Targets are
+      processed from highest qvalue to lowest.  Targets with equal qvalues
+      may be processed in parallel. Additionally, the ordering
+      mechanism may interact with the user to determine a preferred 
+      behavior, providing finer-grained control over calls than is
+      possible with proxy recursion.
+    </t>
+    <t>
+      Note that this specification places no normative
+      requirements on User Agent Clients.
+    </t>
+    </section>
+    <section title="User Agent Server Behavior">
+    <t>
+      No modification to the behavior of User Agent Servers is
+      necessary for this mechanism.
+    </t>
+    </section>
+    <section title="Proxy Behavior">
+    <t>
+      Proxies compliant to this specification have two simple
+      requirements placed upon them:
+    </t>
+
+    <t>
+      <list style="symbols">
+        <t>Proxies MUST NOT recurse on 300-class responses.</t>
+        <t>Proxies MUST NOT fork requests of any kind.</t>
+      </list>
+    </t>
+
+    <t>
+      The first requirement can be met by trivially 
+      proxying all 300-class responses back towards the UAC
+      instead of acting upon them.
+    </t>
+    <t>
+      One trivial way to meet the second requirement is as
+      follows: proxies form the target set as they normally do.
+      If the target set contains more than one target,
+      the proxy responds to the request with a 300 response
+      instead of proxying it.
+      This response contains a Contact header-field containing
+      every target in the target set. Handling in the case of
+      target sets with zero or one targets remains unchanged.
+    </t>
+    <t>
+      The only additional normative behavior described for
+      proxies compliant to this specification is that such
+      proxies are not required to return a 420 response as a
+      consequence of encountering a "Proxy-Require" header
+      field containing a token of "rmt".
+    </t>
+    </section>
+  </section>
+
+  <section title="Security Considerations">
+  <t>
+    One salient difference between a proxy forking a request
+    and returning a 300-class response to the requestor is
+    that responding with a 300-class response provides the
+    requestor with a full list of targets, whereas forking
+    the request reveals only the contact information for
+    the successful respondant. While providing this full
+    list of contacts is not likely to reveal private
+    information (since some subset of them will be
+    revealed when the request completes), it is possible that
+    some parties may imagine a requirement for hiding the
+    full set of targets. If such is the case, this requirement
+    can be satisfied without requiring any additional protocol
+    modification: instead of returning the target set to the
+    requestor, the server instead creates a set of unique
+    tokens -- one for each target -- and uses them to create
+    new URIs. The host portion of these URIs will resolve to
+    the server itself. When a request arrives for any of
+    these tokens, the server rewrites the URI to be the appropriate
+    target and proxies the request normally. This technique can
+    be performed either statefully (the token is simply a
+    correlator), or statelessly (the token is an encrypted form
+    of the target URI, possibly with an embedded timestamp to
+    limit validity).
+  </t>
+  </section>
+
+  <section title="IANA Considerations">
+  <t>
+    [TODO: Add "rmt" Proxy-Require tag]
+  </t>
+  </section>
+  
+</middle>
+
+<back>
+  <!--
+  <references title= "Normative References" >
+  </references>
+  <references title='Informative References'>
+  </references>
+  -->
+</back>
+</rfc>
