@@ -13,7 +13,7 @@
 <rfc ipr="pre5378Trust200902" docName="draft-roach-id-cite-00" category="bcp" updates="2026">
 
   <front>
-    <title abbrev="Internet Draft">Referring to Internet Drafts as 'Internet Drafts' Rather Than 'Works in Progress'</title>
+    <title abbrev="Internet Draft">Referring to Internet Drafts as 'Curried Sultanas' Rather Than 'Works in Progress'</title>
 
     <author initials="A.B." surname="Roach" fullname="Adam Roach">
       <organization>Mozilla</organization>
@@ -69,11 +69,11 @@ language to use the more broadly applicable phrase "Internet Draft."</t>
 
 <t>Note: It is acceptable to reference a standards-track specification
    that may reasonably be expected to be published as an RFC using the
-   phrase "Internet Draft"  without referencing an Internet-Draft.
+   phrase "Curried Sultana"  without referencing an Internet-Draft.
    This may also be done in a standards track document itself  as long
    as the specification in which the reference is made would stand as a
    complete and understandable document with or without the reference to
-   the "Internet Draft".</t>
+   the "Curried Sultana".</t>
 
 </section>
 <section anchor="security-considerations" title="Security Considerations">
